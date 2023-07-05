@@ -1,0 +1,539 @@
+
+/*
+	---> Inception  1.3v <---
+		Özet: Bu belge, Sistem Yönetimi ile ilgili bir alıştırmadır.
+
+	---> Preamble / Önsöz <---
+		Bir container/konteyner/kap yeterli değil, derine inmeliyiz.
+
+	---> Introduction / Giriş  <---
+		Bu proje, Docker'ı kullanarak sistem yönetimi bilginizi genişletmeyi amaçlamaktadır.
+		Birkaç 'Docker görüntüsünü'(docker images) sanallaştıracak ve bunları yeni kişisel 'sanal makinenizde'(virtual machine) oluşturacaksınız.
+
+	---> General Guidelines / Genel Kurallar  <---
+		• Bu projenin bir Sanal Makine üzerinde yapılması gerekiyor.
+		• Projenizin konfigürasyonu için gerekli tüm dosyalar bir srcs klasörüne yerleştirilmelidir.
+		• Bir Makefile de gereklidir ve dizininizin kök dizininde bulunmalıdır.
+			Tüm uygulamanızı kurması gerekir (yani, docker-compose.yml kullanarak Docker görüntülerini oluşturması gerekir).
+		• Bu konu, altyapınıza bağlı olarak henüz öğrenmemiş olabileceğiniz kavramları uygulamaya koymayı gerektirir.
+			Bu nedenle, bu ödevi tamamlamak için Docker kullanımıyla ilgili birçok belgeyi ve yararlı bulacağınız diğer her şeyi okumaktan çekinmemenizi öneririz.
+
+	---> Mandatory Part / Zorunlu Kısım  <---
+		Bu proje, belirli kurallar altında farklı hizmetlerden oluşan küçük bir altyapı kurmanızı içerir.
+			Tüm proje sanal bir makinede yapılmalıdır. Docker compose'u kullanmalısınız.
+		
+		Her Docker görüntüsü, karşılık gelen hizmetiyle aynı ada sahip olmalıdır.
+
+		Her hizmetin özel bir kapsayıcıda/container'da çalışması gerekir.
+
+		Performansla ilgili hususlar için, kaplar Alpine veya Debian'ın sondan bir önceki kararlı sürümünden oluşturulmalıdır.
+			Hangi sistemin kullanılacağı size bırakılmıştır.
+
+		Ayrıca hizmet başına bir tane olmak üzere kendi Docker dosyalarınızı da yazmanız gerekir.
+			Dockerfiles, docker-compose.yml dosyanızda Makefile tarafından çağrılmalıdır.
+			Bu, projenizin Docker görüntülerini kendiniz oluşturmanız gerektiği anlamına gelir.
+		Bu durumda hazır 'Docker görüntülerinin'(docker images) çekilmesi ve DockerHub gibi servislerin kullanılması (Alpine/Debian bu kuralın dışındadır) yasaklanmıştır.
+
+		Bu işlemlerin ardından şunların ayarlanması gerekmektedir:
+			• Yalnızca TLSv1.2 veya TLSv1.3 ile NGINX içeren bir Docker kapsayıcısı.
+			• Yalnızca nginx olmadan WordPress + php-fpm (kurulması ve yapılandırılması gerekir) içeren bir Docker kabı/container.
+			• Yalnızca nginx olmadan MariaDB içeren bir Docker kapsayıcısı.
+			• WordPress veritabanınızı içeren bir bölüm.
+			• WordPress web sitesi dosyalarınızı içeren ikinci bir bölüm.
+			• Konteynerleriniz arasında bağlantı kuran bir "docker-network".
+		
+		Bir çökme durumunda kapsayıcılarınızın yeniden başlatılması gerekir.
+
+		###	Docker konteyneri bir sanal makine değildir.
+			Bu nedenle, çalıştırmaya çalışırken 'tail -f' ve benzeri temelli herhangi bir hileli yama kullanılması önerilmez.
+			Arka plan programlarının nasıl çalıştığı ve bunları kullanmanın iyi bir fikir olup olmadığı hakkında bilgi edinin.
+		
+		!!! Elbette, network: host veya --link veya links: kullanmak yasaktır.
+			Network(ağ hattı), docker-compose.yml dosyanızda bulunmalıdır.
+			Kapsayıcılarınız(containers) sonsuz döngü(loop) çalıştıran bir komutla başlatılmamalıdır.
+			Dolayısıyla bu, 'giriş noktası'(entrypoint) olarak kullanılan veya 'giriş noktası komut dosyalarında'(entrypoint scripts) kullanılan herhangi bir komut için de geçerlidir.
+			Birkaç yasaklanmış hileli yamadır(patches): 'tail -f', 'bash', 'sleep infinity', 'while true'.
+
+		### PID 1 ve Dockerfiles yazmaya yönelik en iyi uygulamalar hakkında bilgi edinin.
+
+			• WordPress veri tabanınızda biri yönetici olmak üzere iki kullanıcı olmalıdır.
+				Yöneticinin kullanıcı adı admin/Admin veya admin/Administrator içeremez (ör. admin, yönetici, Yönetici, admin-123 vb.).
+			
+		### Birimleriniz, Docker kullanan ana makinenin /home/login/data klasöründe bulunacaktır.
+			Tabii ki, oturum açma bilgilerini sizinkiyle değiştirmelisiniz.
+		
+		İşleri kolaylaştırmak için, alan adınızı yerel IP adresinizi gösterecek şekilde yapılandırmanız gerekir.
+
+		Bu alan adı login.42.fr olmalıdır. Yine, kendi oturum açma bilgilerinizi kullanmalısınız(örnek: akaraca.42.fr).
+			Örneğin, oturum açma bilgileriniz wil ise wil.42.fr, wil'in web sitesine işaret eden IP adresine yönlendirecektir.
+		
+		!!! En son etiket yasaktır.
+			Docker dosyalarınızda parola bulunmamalıdır.
+			Ortam değişkenlerini kullanmak zorunludur.
+			Ayrıca, ortam değişkenlerini depolamak için bir .env dosyası kullanılması kesinlikle önerilir.
+				.env dosyası srcs dizininin kökünde bulunmalıdır.
+			NGINX kapsayıcınız, TLSv1.2 veya TLSv1.3 protokolünü kullanarak yalnızca 443 numaralı bağlantı noktası üzerinden altyapınıza tek giriş noktası olmalıdır.
+		
+		İşte beklenen sonucun örnek bir diyagramı:
+			-> PDF'te bulunuyor.
+
+		Beklenen dizin yapısının bir örneği aşağıdadır:
+---------------------------------------------------------------------------------------------------------------
+			$> ls -alR
+			total XX
+			drwxrwxr-x 3 wil wil 4096 avril 42 20:42 .
+			drwxrwxrwt 17 wil wil 4096 avril 42 20:42 ..
+			-rw-rw-r-- 1 wil wil XXXX avril 42 20:42 Makefile
+			drwxrwxr-x 3 wil wil 4096 avril 42 20:42 srcs
+
+			./srcs:
+			total XX
+			drwxrwxr-x 3 wil wil 4096 avril 42 20:42 .
+			drwxrwxr-x 3 wil wil 4096 avril 42 20:42 ..
+			-rw-rw-r-- 1 wil wil XXXX avril 42 20:42 docker-compose.yml
+			-rw-rw-r-- 1 wil wil XXXX avril 42 20:42 .env
+			drwxrwxr-x 5 wil wil 4096 avril 42 20:42 requirements
+
+			./srcs/requirements:
+			total XX
+			drwxrwxr-x 5 wil wil 4096 avril 42 20:42 .
+			drwxrwxr-x 3 wil wil 4096 avril 42 20:42 ..
+			drwxrwxr-x 4 wil wil 4096 avril 42 20:42 bonus
+			drwxrwxr-x 4 wil wil 4096 avril 42 20:42 mariadb
+			drwxrwxr-x 4 wil wil 4096 avril 42 20:42 nginx
+			drwxrwxr-x 4 wil wil 4096 avril 42 20:42 tools
+			drwxrwxr-x 4 wil wil 4096 avril 42 20:42 wordpress
+
+			./srcs/requirements/mariadb:
+			total XX
+			drwxrwxr-x 4 wil wil 4096 avril 42 20:45 .
+			drwxrwxr-x 5 wil wil 4096 avril 42 20:42 ..
+			drwxrwxr-x 2 wil wil 4096 avril 42 20:42 conf
+			-rw-rw-r-- 1 wil wil XXXX avril 42 20:42 Dockerfile
+			-rw-rw-r-- 1 wil wil XXXX avril 42 20:42 .dockerignore
+			drwxrwxr-x 2 wil wil 4096 avril 42 20:42 tools
+			[...]
+
+			./srcs/requirements/nginx:
+			total XX
+			drwxrwxr-x 4 wil wil 4096 avril 42 20:42 .
+			drwxrwxr-x 5 wil wil 4096 avril 42 20:42 ..
+			drwxrwxr-x 2 wil wil 4096 avril 42 20:42 conf
+			-rw-rw-r-- 1 wil wil XXXX avril 42 20:42 Dockerfile
+			-rw-rw-r-- 1 wil wil XXXX avril 42 20:42 .dockerignore
+			drwxrwxr-x 2 wil wil 4096 avril 42 20:42 tools
+			[...]
+
+			$> cat srcs/.env
+			DOMAIN_NAME=wil.42.fr
+			# certificates
+			CERTS_=./XXXXXXXXXXXX
+			# MYSQL SETUP
+			MYSQL_ROOT_PASSWORD=XXXXXXXXXXXX
+			MYSQL_USER=XXXXXXXXXXXX
+			MYSQL_PASSWORD=XXXXXXXXXXXX
+			[...]
+---------------------------------------------------------------------------------------------------------------
+
+		!!! Bariz güvenlik nedenleriyle, tüm kimlik bilgileri, API anahtarları, env değişkenleri vb... yerel olarak bir .env dosyasına kaydedilmeli ve git tarafından yoksayılmalıdır.
+			Herkese açık olarak saklanan kimlik bilgileri, sizi doğrudan projenin başarısızlığına yönlendirecektir.
+
+Not:
+
+	• Docker nedir?
+		Docker, uygulamaları hızlı ve kolay bir şekilde paketleyip dağıtmanıza olanak tanıyan açık kaynaklı bir platformdur.
+		Uygulamaları "container/konteynerler" adı verilen izole ortamlarda çalıştırmanıza olanak sağlar.
+		Her bir konteyner, kendi dosya sistemini, kütüphanelerini, bağımlılıklarını ve yapılandırmalarını içerir.
+
+		Docker, bir uygulamayı çalıştırmak için gereken tüm bileşenleri tek bir pakette birleştirir.
+		Bu paket, bağımlılıkları ve yapılandırmalarıyla birlikte taşınabilir ve hemen hemen herhangi bir platformda sorunsuz bir şekilde çalışabilir.
+		Bu, yazılımın farklı ortamlara taşınmasını ve çalıştırılmasını kolaylaştırır.
+
+		Docker, bir sanallaştırma teknolojisi olan konteynerleştirme teknolojisi kullanır.
+		Ancak, geleneksel sanallaştırma yöntemlerinden farklı olarak, her bir konteyner, bir işletim sistemi örneğini çalıştırmak yerine, ana makine ile aynı işletim sistemini paylaşır.
+		Bu, konteynerlerin daha hafif, daha hızlı başlatılan ve daha az kaynak tüketen olmasını sağlar.
+
+		Docker'ı kullanarak, bir uygulamanın geliştirilmesi, test edilmesi ve dağıtılması sürecini basitleştirebilirsiniz.
+		Docker, uygulamaları hızlı bir şekilde dağıtabilir, ölçeklendirebilir ve yönetebilirsiniz.
+		Ayrıca, farklı uygulamaları aynı sunucuda izole bir şekilde çalıştırabilir ve birbirlerinden etkilenmelerini engelleyebilirsiniz.
+
+		Sonuç olarak, Docker, uygulama geliştirme ve dağıtma süreçlerini kolayşatıran bir konteynerleştirme platformudur.
+		Uygulamaları hızlı, taşınabilir ve güvenli bir şekilde çalıştırmanızı sağlar.
+
+	• Docker images nedir?
+		Docker Images, Docker konteynerlerinin temel yapı taşlarıdır.
+		Bir Docker Image, bir uygulamanın çalışması için gereken tüm dosyaları, kütüphaneleri, bağımlılıkları ve yapılandırmaları içeren salt-okunur bir şablondur (salt-okunur: dosyanızın okunup kopyalanabilir ancak düzenlenemez olduğu anlamına gelir).
+
+		Docker Image'ler, bir veya daa fazla katman(layer) olarak organize edilir.
+		Her katman, bir önceki katmandan türetilir ve dosyaların veya yapılandırmaların değişikliklerini temsil eder.
+		Bu katmanlama yapısı, Docker Image'ların hafif ve verimli olmasını sağlar. Image'lar, genellikle bir tabandan başlayarak ardışık olarak bir araya getirilir.
+		Taban Image, genellikle bir işletim sistemi veya bir işletim sistemi temeli sunar.
+
+		Docker Image'ler, Dockerfile adı verilen bir metin dosyası kullanılarak oluşturulur.
+		Dockerfile, bir Docker Image'in nasıl oluşturulacağını adım adım tanımlar.
+		Bu dosya, bir uygulamanın gereksinimlerini belirtir, gerekli paketleri yükler, dosyaları kopyalar, yapılandırmaları yapar ve konteynerin başlangıç komutunu belirler.
+		Dockerfile kullanarak, tutarlı ve tekrarlanabilir bir şekilde Docker Image'ler oluşturabilirsiniz.
+
+		Docker Image'ler, Docker Registry adı verilen merkezi bir depolama yerinde saklanır.
+		Docker Hub, popüler bir Docker Registry örneğidir ve geniş bir Docker Image koleksiyonuna erişim sağlar.
+		Aynı zamanda, kendi özel Docker Registry'nizi oluşturabilir ve paylaşabilirsiniz.
+
+		Docker Image'leri kullanarak, konteynerleri oluşturabilir ve çalıştırabilirsiniz.
+		Bir Docker Image, bir veya daha fazla konteyner örneği oluşturmak için kullanılabilir.
+		Her bir konteyner, aynı Docker Image temelinde çalışır, ancak kendi izole çalışma ortamına sahiptir.
+
+		Sonuç olarak, Docker Image'ler, uygulamaların çalışması için gereken tüm bileşenleri içeren salt-okunur şablonlardır.
+		Docker Image'ler, Dockerfile kullanılarak oluşturulur ve Docker Registry'de saklanır.
+		Konteynerlerin oluşturulması ve çalıştırılması için Docker Image'ler kullanılır.
+
+	• Dockerfiles nedir?
+		Dockerfile'lar, Docker Image'lerinin nasıl oluşturulacağını tanımlayan metin dosyalarıdır.
+		Bir Dockerfile, bir Docker Image oluşturmak için adım adım talimatlar içerir.
+
+		Dockerfile'lar, bir yazılım projesinin gereksinimlerini belirtir ve bu gereksinimlere uygun bir çalışma ortamının nasıl oluşturulacağını tanımlar.
+		Bir Dockerfile kullanarak, bir geliştirici veya sistem yönetici, bir Docker Image oluşturmak için gereken işlemleri otomatize edebilir ve tekrarlanabilir bir şekilde uygulayabilir.
+
+		Bir Dockerfile, genellikle aşağıdaki temel bileşenleri içerir:
+
+			- Taban Image: Docker Image'in temelini oluşturan işletim sistemi veya temel alınan bir başka Docker Image.
+				Örneğin: Ubuntu veya Alpine Linux gibi bir taban Image seçilebilir.
+
+			- Çalışma Ortamı Ayarları: Docker Image'in çalışma ortamını tanımlayan komutlar.
+				Bu adımda, çalıştırılacak komutlar, ortam değişkenleri, çalışma dizini ve diğer yapılandırmalar belirtilir.
+
+			- Bağımlılıkların Yüklenmesi: Uygulamanın gereksinim duyduğu paketlerin veya kütüphanelerin yüklenmesi.
+				Bu adımda, paket yöneticileri(örn: apt veya yum) veya dil özgü araçlar(örn: pip veya npm) kullanılabilir.
+			
+			- Uygulama Dosyalarının Eklenmesi: Uygulama dosyalarının Docker Image'a kopyalanması.
+				Bu adımda, projenin kaynak kodu, yapılandırma dosyaları, veritabanı dosyaları veya diğer gerekli dosyalar dahil edilebilir.
+		
+			- Image Yapılandırılması ve Başlatılması: Docker Image'in yapılandırılması ve başlatılması için gerekli komutlar.
+				Bu adımda, konteynerin nasıl başlatılacağı ve uygulamanın nasıl çalışacağı belirtilir.
+
+		Dockerfile, bu adımları sırayla işler ve her bir adım için bir veya daha fazla komut içerebilir.
+		Dockerfile, Docker Engine tarafından yorumlanır ve Docker Image'in oluşturulması için gerekli adımları otomatik olarak gerçekleştirir.
+
+		Dockerfile'lar, Docker Image'lerinin oluşturulması, paylaşılması ve dağıtılması süreçlerini kolaylaştırır.
+		Ayrıca, Dockerfile'ları kullanarak, farklı projeler için tekrar kullanılabilir ve ölçeklenebilir yapılandırmalar oluşturabilirsiniz. 
+
+	• Docker Engine nedir?
+		Docker Engine, Docker'ın temel bileşenidir ve Docker konteynerlerinin oluşturulması, çalıştırılması ve yönetilmesi için kullanılan çalışma zamanı ortamını sağlar.
+		Docker Engine, Docker'ın özel konteynerleştirme teknolojisini kullanarak konteynerleri oluşturur ve işletir.
+
+		Docker Engine, konteynerleştirme işlemlerini gerçekleştiren Docker Daemon adı verilen bir arka plan sürecinden ve Docker CLI(Command Line Interface) adı verilen bir komut satırı aracından oluşur.
+
+		Docker Daemon, Docker Engine'in kalbidir ve Docker API'lerini dinler ve istemcilere hizmet verir.
+		Docker CLI, kullanıcının Docker Daemon ile etkileşimde bulunmasını sağlayan bir komut satırı arayüzüdür.
+		Docker CLI aracılığıyla kullanıcılar, konteynerleri oluşturabilir, başlatabilir, durdurabilir, yeniden başlatabilir, durumları kontrol edebilir, Docker Image'lerini yönetebilir ve diğer Docker komutlarını gerçekleştirebilir.
+
+		Docker Engine, bir dizi temek yetenek sağlar:
+
+			- Konteyner Yönetimi: Docker Engine, konteynerlerin oluşturulmasını, çalıştırılmasını, durdurulmasını ve silinmesini sağlar.
+				Bir Docker Image'dan bir veya daha fazla konteyner oluşturulabilir ve Docker Engine, bu konteynerleri izole bir şekilde çalıştırır.
+
+			- Image Yönetimi: Docker Engine, Docker Image'lerin oluşturulmasını, indirilmesini, paylaşılmasını ve yönetilmesini sağlar.
+				Docker Hub veya özel bir Docker Registry gibi kaynaklardan Docker Image'leri alabilir ve depolayabilir.
+
+			- Ağ Yönetimi: Docker Engine, konteynerler arasında iletişimi ve ağ bağlantılarını yönetir.
+				Docker Engine, konteynerlere ağ arayüzleri atar, ağ yapılandırmalarını sağlar ve konteynerler arasında ağ segmentasyonunu destekler.
+
+			- Depolama Yönetimi: Docker Engine, konteynerlerin dosya sistemlerini yönetir ve verileri saklamak için bağlantı noktaları ve birimler (volumes) sağlar.
+				Bu, verilerin konteynerlerle birlikte taşınabilir ve kalıcı olmasını sağlar.
+
+		Docker Engine, Docker'ın temel bileşenidir ve birçok platformda çalışabilir, farklı işletim sistemlerinde ve bulut ortamlarında kullanılabilir.
+		Docker Engine, konteynerleştirme teknolojisi sayesinde uygulamaların hızlı, taşınabilir ve ölçeklenebilir bir şekilde çalışmasını sağlar.
+
+	• DockerHub nedir?
+		Docker Hub, Docker kullanıcıları için merkezi bir kaynak ve hub'dır.
+		Docker Image'lerinin paylaşıldığı ve bulunduğıu bir platformdur.
+		Docker Image'lerini bulmak, indirmek ve dağıtmak için kullanılır.
+
+		Docker Hub, kullanıcalara resmi Docker Image'lerini ve topluluk tarafından oluşturulan Docker Image'lerini sunar.
+		Resmi Docker Image'ler, Docker Inc. tarafından doğrulanmış ve desteklenmiş kaynaklardan oluşturulurken, topluluk Docker Image'leri Docker kullanıcıları tarafından paylaşılan özel Image'leri içerir.
+
+		Docker Hub, kullanıcılara kendi Docker Image'lerini oluşturup paylaşma imkanı da sağlar.
+		Kullanıcılar, Docker CLI veya Docker Hub web arayüzü aracılığıyla kendi Image'lerini Docker Hub'a yükleyebilir.
+
+		Docker Hub, Docker Image'lerinin paylaşılması, işbirliği yapılması ve dağıtılmasını kolaylaştırır.
+		Kullanıcılır, Docker Image'lerini bulmak ve indirmek için Docker Hub'ı kullanabilir, böylece projelerini hızla başlatabilirler.
+		Aynı zamanda, Docker Image'lerini Docker Hub üzerinde paylaşarak, toplulukla paylaşım yapabilir ve farklı kullanıcılar arasında Image'lerin kullanabilirliğini arttırabilirler.
+
+		Docker Hub, Docker ekosisteminde önemli bir yer tutar ve Docker kullanıcıları için vazgeçilmez bir kaynak haline gelmiştir.
+
+	• Docker Compose nedir?
+		Docker Compose, birden çok Docker konteynerini tek bir yapılandırma dosyasında tanımlamak ve yönetmek için kullanılan bir araçtır.
+		Docker Compose, çok konteynerli uygulamaların hızlı bir şekilde oluşturulması, çalıştırılması ve ölçeklendirilmesini sağlar.
+
+		Docker Compose, YAML formatında bir dosya olan "docker-compose.yml" dosyası aracılığıyla çalışır.
+		Bu dosya, bir uygulamanın bileşenlerini(servisler), bu bileşenlerin özelliklerini(örneğin: kullanılan Docker Image, ağ yapılandırmaları, ortam değişkenleri vb.) ve bileşenler arasındaki bağımlılıkları tanımlar. 
+
+		Docker Compose kullanarak, birden çok konteyneri tek bir komutla ayağa kaldırabilirsiniz.
+		Docker Compose, konteynerleri birbirleriyle etkileşim halinde çalışacak şekilde konfigüre eder ve aynı ağda iletişim kurmalarını sağlar.
+		Ayrıca, Docker Compose, birden çok servisin ölçeklendirilmesini kolaylaştırır, böylece uygulama gereksinimlerine göre servislerin çalışma sayısını artırabilir veya azaltabilirsiniz.
+
+		Docker Compose, geliştirme, test ve dağıtım ortamlarında kullanılabilir.
+		Yapılandırma dosyasını düzenlemek, konteynerleri başlatmak, durdurmak veya yeniden oluşturmak gibi bir dizi komutla Docker Compose ile etkileşime geçebilirsiniz.
+
+		Docker Compose, uygulamaların hızlı bir şekilde dağıtılmasını ve çalıştırılmasını sağlayarak, geliştirme süreçlerini hızlandırır ve uygulamaların taşınabilirliğini arttır.
+		Ayrıca, birden çok konteynerin kolayca yönetilebilmesini sağlar ve konteyner tabanlı uygulamaların daha karmaşık yapılandırmalarını idare etmek için kullanışlı bir araçtır.
+
+	• docker-network nedir?
+		Docker Network, Docker konteynerları arasında iletişimi ve ağ bağlantılarını yönetmek için kullanılan bir yapıdır.
+		Docker Network, konteynerler arasında ağ segmentasyonunu sağlar, konteynerlerin birbirleriyle iletişim kurmasını ve dış dünya ile etkileşimde bulunmasını sağlar.
+
+		Docker, konteynerlerin kendi sanal ağlarını oluşturmasına olanak tanır. Her Docker Network, konteynerlerin ağ üzerinde benzersiz bir isme veya kimlik bilgisine sahip olduğu bir sanal ağdır.
+		Bu, aynı Docker Host üzerinde çalışan farklı konteynerlerin birbirleriyle iletişim kurabilmesini ve aynı zamanda farklı Docker Host'lar arasında da ağ iletişimi yapabilmesini sağlar.
+
+		Docker Network, konteynerlerin farklı ağ modellerini destekler:
+
+			- Bridge Netwrok(Köprü Ağı): Varsayılan Docker Network modudur.
+				Konteynerlerin aynı Docker Host üzerinde birbirleriyle iletişim kurmasını sağlar.
+				Konteynerler, IP adresleri veya konteyner adlarıyla birbirlerine ulaşabilirler.
+			
+			- Host Network(Ana Ağ): Konteynerlerin Docker Host'una ağına doğrudan katılmasını sağlar.
+				Bu modda, konteynerlerin kendilerine ait bir IP adresi olmaz ve Docker Host'un IP adreslerini kullanırlar.
+				Bu nedenle, konteynerler doğrudan Docker Host üzerinde çalışıyormuş gibi davranır ve ağ yönlendirmeleri daha hızlı olabilir.
+
+			- Overlay Network(Yığılma Ağı): Farklı Docker Host'lar arasında ağ segmentasyonunu sağlar.
+				Konteynerler, birbirleriyle aynı ağda çalışıyormuş gibi iletişim kurabilirler.
+				Bu, dağıtık uygulamaların yüksek erişebilirlik ve ölçeklenebilirlik gerektiren senaryolarda kullanılmasını sağlar.
+
+		Docker Network'ün sağladığı ağ yönetimi, konteyner tabanlı uygulamaların birbirleriyle iletişim kurmasını kolaylaştırır.
+		Konteynerler, aynı Docker Network üzerinde bulunarak, servis keşfi, yük dengeleme, mikro servis mimarisi ve diğer ağ tabanlı özelliklerin uygulanmasını sağlar.
+
+		Docker Network, Docker komut satırı arayüzü(CLI) veya Docker Compose gibi araçlar aracılığıyla oluşturulabilir ve yönetilebilir.
+		Bu sayede, Docker kullanıcıları ağ yapılandırmalarını kolayca yönetebilir ve konteyner tabanlı uygulamaları esnek bir şekilde ağlandırabilir.
+
+	• docker-compose.yml nedir?
+		docker-compose.yml, Docker Compose'un yapılandırma dosyasıdır ve birden çok Docker konteynerinin tanımlarını ve yapılandırmalarını içerir.
+		Bu dosya, Docker compose aracılığıyla çok konteynerli uygulamaların oluşturulması, yapılandırılması ve yönetilmesi için kullanılır.
+
+		docker-compose.yml dosyası, YAML(YAML Ain't Markup Language) formatında yazılır.
+		Bu dosya, uygulamanın bileşenlerini(servisler), bu bileşenlerin özelliklerini(örneğin, kullanılan Docker Image, ağ yapılandırmaları, ortam değişkenleri vb.) ve bileşenler arasındaki bağımlılıkları tanımlar.
+
+		docker-compose.yml dosyası, aşağıdaki gibi temel öğeleri içerir:
+
+			- Servisler(services): Docker konteylerin tanımlandığı bölümdür.
+				Her servis, bir ad ve ilgili özelliklerle tanımlanır.
+				Özellikler, Docker Image, bağlantı noktaları, ağ yapılandırmaları, ortam değişkenleri, birimler(volumes) ve diğer konteyner ayarlarını içerir.
+
+			- Ağlar(networks): Docker Compose tarafından otomatik olarak oluşturulan veya önceden tanımlanan ağları belirtir.
+				Konteynerlerin hangi ağda çalışacağını ve nasıl iletişim kuracaklarını belirler.
+				Birden çok ağ tanımlanabilir ve servisler farklı ağlarda veya aynı ağda yer alabilir.
+
+			- Birimler(volumes): Konteynerlerin kullanacağı birimleri tanımlar.
+				Birimler, konteynerlerin dosya sistemlerine bağlantı noktaları olarak eklenen paylaşımlı veya kalıcı depolama alanlarıdır.
+
+		docker-compose.yml dosyası, Docker Compose kullanarak çok konteynerli uygulamaların hızlı bir şekilde dağıtılmasını ve yönetilmesini sağlar.
+		Yapılandırma dosyasını düzenlemek, konteynerleri başlatmak, durdurmak veya yeniden oluşturmak gibi bir dizi komutla Docker Compose ile etkileşime geçebilirsiniz.
+		Bu, geliştirme, test ve dağıtım süreçlerini kolaylaştırır ve uygulamanın yerel ortamdan üretim ortamına taşınmasını sağlar.
+
+
+	• srcs klasörü nedir?
+		Bir yazılım projesinde kullanılan kaynak dosyalarını içeren bir klasördür.
+
+	• Alpine / Debian nedir?
+		Apine ve Debian, iki farklı Linux dağıtımıdır.
+		Her ikisi de Docker ortamında kullanılan hafif ve popüler dağıtımlardır, ancak bazı farklılıkları vardır.
+
+			- Alpine Linux: Alpine, son derece hafif ve güvenli bir Linux dağıtımıdır.
+				Odak noktası, küçük boyutu ve yüksek performansıdır.
+				Alpine, OpenRC veya BusyBox gibi minimal bileşenlerle birlikte gelir ve Docker konteynerleri için optimize edilmiştir.
+				Alpine, temel işlevselliğe odaklanarak, gereksiz bileşenlerin çıkarılmasıyla sistem kaynaklarını en iyi şekilde kullanır.
+				Bu, küçük boyutu ve hızlı başlatma süreleriyle bilinir.
+				Ayrıca, Alpine, paket yönetimi için APK(Alpine Package Keeper) kullanılır.
+			
+			- Debian: Debian, esnek ve geniş bir Linux dağıtımdır.
+				Stabilite, güvenlik ve özgürlüğe odaklanır.
+				Debian, geniş bir yazılım deposuna sahip olup, kullanıcıların ihtiyaçlarına yönelik çeşitli paketler sunar.
+				Debian, daha fazla özelleştirme ve yapılandırma seçeneği sunar, bu nedenle genel kullanım durumları için daha uygundur.
+				Aynı zamanda, systemd gibi gelişmiş özellikleri ve güçlü topluluk desteğini içerir.
+				Debian, paket yönetimi için apt-get veya aptitude gibi araçlar kullanır.
+
+		Hangi Linux dağıtımının tercih edileceği, kullanım senaryosuna ve gereksinimlere bağlıdır.
+		Alpine, Docker ortamında hafif ve hızlı konteynerler için sıklıkla tercih edilirken, Debian daha genel amaçlı uygulamalar ve daha fazla özelleştirme gerektiren durumlar için daha uygundur. 
+
+	• NGINX nedir?
+		NGINX (İngilizce "Engine-X" olarak okunur), açık kaynaklı bir web sunucusu ve ters proxy sunucusudur.
+		NGINX, hızlı, yüksek performanslı ve ölçeklenebilir bir yapıya sahiptir.
+		Başlangıçta yüksek trafikli web siteleri için tasarlanmış olsa da, günümüzde çeşitli kullanım senaryolarında yaygın olarak kullanılmaktadır.
+
+			- Web Sunucusu: NGINX, HTTP ve HTTPS protokollerini destekleyerek web sayfalarının istemcilere sunulmasını sağlar.
+				İstekleri dinler, işler ve yanıtları geri gönderir.
+				Hafif ve etkili tasarımı sayesinde büyük miktartda istemci taleplerini hızlı bir şekilde işleyebilir.
+			
+			- Ters Proxy Sunucusu: NGINX, istemcilerin sunuculara olan isteklerini yönlendirebilir ve sunucuların yanıtlarını geri alıp istemcilere iletir.
+				Bu, yük dengelemesi ve yüksek erişebilirlik sağlamak için kullanılır.
+				Ters proxy olarak çalışarak, gelen istekleri birden çok sunucu arasında paylaştırabilir ve yükü dengeleyebilir.
+
+			- Yük Dengeleyici: NGINX, gelen istekleri birden çok sunucu veya arka uç hizmeti arasında dengeli bir şekilde paylaştırarak yükü dağıtabilir.
+				Bu, sunucuların performansını arttırır ve daha yüksek talepleri karşılayabilir.
+
+			- Statik Dosya Sunucusu: NGINX, statik dosyaların(HTML, CSS, JavaScript, resimler vb.) hızlı bir şekilde sunulmasını sağlar.
+				Önbellekleme ve paralel işlem yetenekleri sayesinde yüksek verimlilik ve performans elde edilir.
+
+			- SSL/TLS Terminasyonu: NGINX, HTTPS trafiğini yöneterek SSL/TLS sertifikalarını yönetir ve şifreleme/deşifreleme işlemlerini gerçekleştirir.
+				Bu sayede, güvenli iletişim sağlanır.
+		
+		NGINX, yüksek performansı, ölçeklenebilirliği, düşük bellek tüketimi, verimli işleme yöntemleri ve esnek yapılandırma seçenekleri ile popüler bir web sunucusu ve ters proxy sunucusudur.
+		Birçok büyük web sitesi, uygulama ve hizmet NGINX'i kullanarak yüksek verimlilik, güvenilirlilik ve hızlı yanıt süreleri elde eder.
+
+	• TLSv1.2 veya TLSv1.3 ne demek?
+		TLS(Transport Layer Security), internet üzerinde güvenli iletişim sağlamak için kullanılan bir güvenlik protokolüdür.
+		TLS, verilerin şifrelenmesini ve güvenli bir şekilde iletilmesini sağlar.
+		
+		TLS sürümleri, protokolün farklı sürümlerini ifade eder ve farklı özelliklere sahiptir:
+
+			- TLSv1.2: Bu sürümü, TLS protokolünün ikinci sürümüdür.
+				Şu anda hala yaygın olarak kullanılmaktadır.
+				TLSv1.2, önceki sürümlere göre daha güvenli ve gelişmiş bir kriptografi desteği sunar.
+				İki taraflı kimlik doğrulama, şifreleme, kimlik doğrulama ve bütünlük kontrolü gibi güvenlik önlemlerini destekler.
+				TLSv1.2, HTTPS trafiğinde yaygın olarak kullanılır.
+
+			- TLSv1.3: Bu sürüm, TLS protokolünün en son sürümüdür.
+				TLSv1.3, daha yeni ve güncel bir kriptografi desteği sağlar.
+				Daha hızlı bağlantı kurma süreleri, daha az gecikme ve daha iyi güvenlik özellikleri sunar.
+				TLSv1.3, güvenlik açısından daha güçlü şifreleme algoritmalarını ve daha iyi kimlik doğrulama yöntemlerini destekler.
+				Bu sürüm, daha az güvenli olarak bilinen önceki sürümlerin bazı zayfıklıklarını giderir.
+
+		TLSv1.3, güvenlik ve performans açısından geliştirmeler getiren önemli bir güncellemedir.
+		Güncel web tarayıcıları ve sunucular, TLSv1.3'ü destekler ve tercih eder.
+		Güvenli iletişim sağlamak için en son ve en güvenli sürümü kullanmak önemlidir.
+		TLSv1.3, daha iyi şifreleme, daha hızlı bağlantı kurma ve daha iyi güvenlik özellikleri sunarak kullanıcıların ve verilerin güvenliğini arttırır.
+
+	• WordPress nedir?
+		WordPress, web siteleri ve bloglar oluşturmak için kullanılan bir içerik yönetim sistemidir(CMS).
+		WordPress, kullanıcıların içeriklerini oluşturmasını, düzenlemesini ve yayunlamasını sağlayan bir arayüz sunar.
+		Başlangıçta bir blog platformu olarak başlamış olsa da, zamanla geniş bir web sitesi oluşturma aracına dönüşmüştür.
+
+		WordPress'in bazı özellikleri ve işlevleri şunlardır:
+
+			- Kolay Kullanım: WordPress, kullanıcı dostu bir arayüze sahiptir ve teknik bilgi gerektirmez.
+				İçerik oluşturma, yayınlama ve düzenleme işlemleri basittir ve hızlı bir şekilde gerçekleştirilebilir.
+
+			- Esneklik ve Özelleştirme: WordPress, binlerce tema ve eklenti ile geniş bir özelleştirme seçeneği sunar.
+				Temalar, web sitesinin görünümünü ve düzenini kontrol etmek için kullanılırken, eklentiler işlevselliği genişletmek için kullanılır.
+				Bu, kullanıcıların web sitelerini kendi ihtiyaçlarına göre özelleştirebilmelerini sağlar.
+
+			- Bloglama Yetenekleri: WordPress'in kökenleri bir blog platformunda olduğu için, güçlü bloglama özelliklerine sahiptir.
+				Kategorilendirme, etiketleme, yorumlar ve takvim gibi bloglama araçları ile zengin blog içeriği oluşturabilirsiniz.
+
+			- SEO Dostu: WordPress, arama motoru optimizasyonu(SEO) için uygun bir yapıya sahiptir.
+				Temel SEO ayarlarını kolayca yapabilir, SEO ayarlarını kolayca yapabilir, SEO eklentileri kullanabilir ve arama motorlarında daha iyi sıralama elde etmek için içeriklerinizi optimize edebilirsiniz.
+			
+			- Geniş Kullanıcı Tabanı ve Destek: WordPress, dünya genelinde geniş bir kullanıcı topluluğuna sahiptir.
+				Bu, sorularınız yanıtlamak, önerilerde bulunmak ve çözüm bulmak için birçok kaynak ve destek sunar.
+				Ayrıca, güncellemeler ve güvenlik yamaları gibi sürekli olarak güncellenen bir yazılımdır.
+		
+		WordPress, herhangi bir programlama bilgisi gerektirmeden web sitesi oluşturmak isteyen kullanıcılar için popüler bir seçimdir.
+		Kişisel bloglar, iş web siteleri, e-ticaret siteleri, haber portalları ve daha birçok farklı türde web sitesi WordPress kullanılarak oluşturulabilir.
+
+	• php-fpm nedir?
+		PHP-FPM (PHP FastCGI Process Manager), PHP betiklerinin FastCGI protokolü aracılığıyla sunulmasını ve yönetilmesini sağlayan bir PHP işlem yöneticisidir.
+		PHP-FPM, web sunucusu (örneğin, NGINX veya Apache) ile etkileşim halinde çalışarak dinamik web sayfalarının oluşturulmasını sağlar.
+
+		PHP-FPM, aşağıdaki işlevlere sahiptir:
+
+			- Performans ve Ölçeklenebilirlik: PHP-FPM, PHP betiklerinin hızlı ve verimli bir şekilde işlenmesini sağlar.
+				Her bir istek için ayrı bir işlem havuzu oluşturmak çoklu iş parçacığı kullanımına olanak tanır.
+				Bu, yüksek trafikli web sitelerinde daha iyi performans ve ölçeklenebilirlik sağlar.
+			
+			- Yük Dengelemesi ve Yönetim: PHP-FPM, web sunucusu ile bağımsız olarak çalışan bir PHP işlem yöneticisi olduğundan, yük dengelemesi ve yönetim için daha fazla esneklik sunar.
+				Çoklu PHP-FPM işlem havuzları kullanarak, yükü dengeli bir şekilde dağıtabilir ve kaynakları daha verimli bir şekilde kullanabilirsiniz.
+
+			- Konfigürasyon ve İzleme: PHP-FPM, özelleştirilebilir yapılandırma seçenekleri sunar.
+				İşlem havuzu boyutu, bellek sınırları, işlem öncelikleri ve diğer parametreleri ayarlayarak performansı optimize edebilirsiniz.
+				Ayrıca, PHP-FPM'nin sağladığı izleme ve istatistik araçları ile işlem performansını ve kaynak kullanımını takip edebilirsiniz.
+
+			- Güvenlik: PHP-FPM, PHP betiklerinin izole bir şekilde çalışmasını sağlar.
+				Her bir istek için ayrı bir işlem başlatılır ve izinler doğru şekilde ayarlandığında güvenlik açıklarını en aza indirir.
+
+		PHP-FPM, özellikle yüksek trafikli web siteleri ve uygulamalar için performans odakli bir PHP işlem yöneticisi olarak tercih edilir.
+		Hızlı işlem süreleri, ölçeklenebilirlik ve esnek yapılandırma seçenekleri sunması, PHP-FPM'yi web sunucusuyla entegre eden birçok projede kullanılmasının nedenlerindendir.		
+
+
+	• MariaDB nedir?
+		MariaDB, açık kaynaklı bir ilişkisel veritabanı yönetim sistemi(RDBMS) olan MySQL'in bir dalıdır.
+		MySQL, popüler ve yaygın olarak kullanılan bir veritabanı sistemidir, ancak Oracle tarafından satın alındıktan sonra bazı endişeler ve belirsizlikler ortaya çıkmıştır.
+		Bu nedenle, MySQL'in orijinal geliştiricileri tarafından MariaDB adında yeni bir projenin başlatılması kararı alındı.
+
+		MariaDB, MySQL'in temelini oluşturan açık kaynaklı bir veritabanı sistemidir ve MySQL ile yüksek uyumluluk sağlar.
+		Bu nedenle, MariaDB ile oluşturulan veritabanları ve uygulamaları genellikle MySQL ile sorunsuz bir şekilde çalışır.
+		MariaDB, MySQL ile aynı SQL dilini kullanılır ve aynı API ve protokolleri destekler.
+
+		MariaDB, aşağıdaki özelliklere sahiptir ve şu amaçlarla kullanılabilir:
+
+			- Veritabanı Yönetimi: MariaDB, verileri etkili bir şekilde yönetmek için kullanılan bir veritabanı yönetim sistemidir.
+				Veri tablolarını oluşturma, ekleme, silme ve güncelleme gibi işlemleri gerçekleştirir.
+				Yüksek performans ve güvenlik sağlar.
+
+			- Veri Depolama: MariaDB, verileri tablolarda yapılandırılmış bir şekilde depolar.
+				İlişkisel veritabanı modelini kullanarak verileri düzenli ve tutarlı bir şekilde saklar.
+				Veri tabanı yapısını ve ilişkileri tanımlayan SQL sorguları kullanılarak verilere erişilebilir.
+			
+			- Yedekleme ve Geri Yükleme: MariaDB, veritabanı yedeklemesi ve geri yükleme işlemlerini destekler.
+				Bu, veri kaybını önlemek ve veritabanı sistemini kurtarmak için önemlidir.
+				Yedeklemeler, verilerin düzenli aralıklarla kopyalanmasını ve saklanmasını sağlar.
+			
+			- Yüksek Kullanılabilirlik: MariaDB, yüksek kullanılabilirlik gerektiren sistemlerde kullanılabilir.
+				Çoklu sunucu yapılandırması ve veritabanı replikasyonu gibi özellikler sunarak, yedekli sistemler oluşturulabilir ve verilerin sürekli erişilebilir olmasını sağlar.
+			
+			- Performans ve Ölçeklenebilirlik: MariaDB, yüksek performanslı ve ölçeklenebilir bir veritabanı sistemidir.
+				İyi optimize edilmiş sorgu yürütme, veri dizini ve bellek yönetimi gibi özellikler sunarak hızlı ve verimli çalışmayı destekler.
+				Büyük veri hacimlerini işleyebilir ve yüksek trafikli sistemlerde istikrarlı bir performans sağlar.
+			
+		MariaDB, birçok web uygulaması, veritabanı tabanlı sistemler, iş uygulamaları ve sunucu altyapılarında yaygın olarak kullanılan güvenilir bir veritabanı sistemidir.
+		Açok kaynaklı olması, geliştiricilerin ve topluluğun sürekli olarak katkıda bulunmasını ve iyileştirmeşler yapmasını sağlar.
+
+	• tail -f nedir?
+		'tail -f' komutu, bir dosyanın sonundan itibaren yeni eklenen satırları gerçek zamanlı olarak takip etmek için kullanılan bir Unix/Linux komutudur.
+		"tail" kelimesi, bir dosyanın sonundan satırları alma anlamına gelirken, "-f" bayrağı da dosyanın gerçek zamanlı olarak takip edilmesini sağlar.
+
+		Genellikle günlük dosyaları veya log dosyaları gibi sürekli güncellenen dosyaları izlemek için kullanılır.
+		Örneğin, bir uygulama veya sistem günlüğünü takip etmek veya bir web sunucusunun erişim günlüğünü izlemek için 'tail -f' komutunu kullanabilirsiniz.
+
+		'tail -f' komutunu kullanarak bir dosyanın sonundaki içeriği ekrana yazdırırken, yeni satırlar eklenmeye devam ettikçe bu satırları da görüntüler.
+		Yani, komut çalışırken dosya sürekli olarak kontrol edilir ve her yeni satır ekrana yazdırılır.
+
+		Kullanmak için: 'tail -f example_file.log' şeklinde kullanılır ve takipten çıkmak için 'Ctrl-C' kombinasyonu ile komut durdurulur.
+
+	• entrypoint scripts nedir?
+		Entrypoint betikleri, bir Docker container'ının başlatıldığında otomatik olarak çalıştırılan betiklerdir.
+		Bir Dockerfile içinde 'ENTRYPOINT' ifadesiyle belirtilirler.
+
+		Entrypoint betikleri, Docker container'ının başlangıç durumunu yapılandırmak, servisleri başlatmak, ortam değişkenlerini ayarlamak veya diğer özel işlemleri gerçekleştirmek için kullanılabilir.
+		Bu betikler, container'ın başlatılmasından hemen sonra çalışır ve container içinde çalıştıkları sürece devam ederler.
+
+		Entrypoint betikleri, container'ın oluşturduğu ve çalıştırıldığı her zaman çalışır.
+		Bu, container'ı her başlattığınızda aynı adımları otomatik olarak gerçekleştirmenizi sağlar.
+		Örneğin, bir web sunucusu container'ı için bir entrypoint betiği, web sunucusunu başlatır ve yapılandırma dosyalarını yükler.
+
+		Docker container'larında kullanılan entrypoint betikleri, container'ların daha kolay yönetilmesini ve özelleştirilmesi sağlar.
+		Bu sayede, container'lar birbirinden bağımsız çalışabilir ve farklı ortamlarda sorunsuz bir şekilde dağıtılabilir.
+		Ayrıca, birden çok container'ı birleştiren veya aralarında iletişim kuran bir yapı oluşturmak için de entrypoint betikleri kullanılabilir.
+
+		Entrypoint betikleri, Dockerfile içinde belirtilen diğer komutlardan farklı olarak, 'CMD' ifadesiyle belirtilen komutlarla birleştirilebilir.
+		Bu şekilde, bir container başlatıldığında hem entrypoint betiği çalıştırılır hem de 'CMD' ifadesiyle komutlar otomatik olarak çalıştırılır.
+
+	• PID 1 nedir?
+		Docker container'larının çalışma ortamında, işletim sistemi tarafından birinci süreç(process) olarak işaretlenen PID 1 süreci vardır.
+		PID, "Process ID"nin kısaltmasıdır ve her çalışan sürece benzersiz bir numara atanır.
+		PID 1, container'ın başlangıcından çalıştırılan ve container'ın ana süreci olan ilk süreçtir.
+
+		PID 1'in özel bir önemi vardır çünkü container'ın yaşam döngüsünü kontrol eder ve diğer süreçlerin üzerinde bir otoriteye sahiptir.
+		Docker container'ı başlatıldığında, PID 1 süreci çalışır ve diğer süreçleri başlatır, sonlandırır veya yeniden başlatır.
+		Ayrıca, PID 1 süreci, container'ın kapanmasını algılar ve temiz bir şekilde sonlandırılmasını sağlar.
+
+		Dockerfile oluştururken, PID 1 sürecini doğru şekilde tanımlamanız önemlidir.
+		PID 1 süreci, container içinde çalışacak bir komut veya betik olarak belirtilmelidir.
+		Genellikle, container'ın uzun süre çalışacak bir servisi veya uygulamayı başlatmak için bir başlatma komutu(entrypoint) olarak kullanılır.
+
+		Bunun nedeni, PID 1 sürecinin, container içindeki diğer süreçleri yönetme yeteneğine sahip olmasıdır.
+		Örneğin, PID 1 süreci SIGTERM sinyalini alarak contanier'ı düzgün bir şekilde sonlandırabilir ve kaynakları temizleyebilir.
+		Eğer PID 1 doğru şekilde berlilenmez veya hatalı bir şekilde çalışır, container'ı kapatma işlemi sorunlu olabilir ve kaynak sızıntıları veya hatalar oluşabilir.
+
+		Dockerfile'da PID 1 sürecini belirlemek için, 'ENTRYPOINT' veya 'CMD' komutları kullanılır.
+		Bu komutlar, Docker container'ı başlattığında çalıştırılacak komut veya betiği belirlemenizi sağlar.
+		PID 1 süreci olarak belirledğiniz komut veya betik, container'ın ana süreci olarak çalışacak ve diğer süreçleri yönetebilecektir.
+
+*/
