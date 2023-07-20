@@ -1,0 +1,63 @@
+Download for Debian: https://www.debian.org/download
+Download for Alpine: https://www.alpinelinux.org/downloads/
+
+VM setup:
+	hostname: debian
+	root passwd: 1
+	full name for the new user: ahmet karaca
+	username for your account: akaraca
+	account passwd: 1
+
+	choose software to setup: 'GNU'
+
+After:
+	$> su
+		password: 1
+	$> apt-get install sudo
+	$> sudo usermod -aG sudo akaraca
+	$> apt-get install vim -y
+	$> apt-get update -y
+	$> apt-get upgrade -y
+	$> sudo apt install openssh-server -y
+	$> sudo vim /etc/ssh/sshd_config
+		-: '#Port 22' -> 'Port 4242'
+		-: '#PermitRootLogin prohibit-password' -> 'PermitRootLogin yes'
+		-> ESC, ':wq' enter
+
+	$> sudo service ssh restart
+	$> sudo systemctl status ssh
+
+	$> sudo apt-get install ufw -y
+	$> sudo ufw enable
+	$> sudo ufw allow ssh
+	$> sudo ufw allow 4242
+	$> sudo ufw status numbered
+	$> sudo ufw delete 1 -y
+	$> sudo ufw delete 2 -y
+
+	set vm network set the port: 4242
+	we need the ip adress: hostname -i
+	then reboot the vm
+	now, you can connect the vm like (use before to @; 'user_name' or 'root'):
+				ssh akaraca@127.0.1.1 -p 4242
+				ssh akaraca@localhost -p 4242
+				ssh root@127.0.1.1 -p 4242
+				ssh root@localhost -p 4242					 
+	
+	$> sudo apt-get install wget // for vscode remote
+	$> sudo apt-get install git -y
+	$> sudo apt-get install make
+	$> sudo apt-get install docker -y
+	$> sudo apt-get install docker-compose -y
+
+
+	: mariadb, wordpress için data dosyalarının oluşturulması ve izinlerinin verilmesi gerekmektedir.
+		$> mkdir -p /home/akaraca/data/mariadb
+		$> mkdir -p /home/akaraca/data/wordpress
+		$> sudo chown -R 999:999 /home/akaraca/data/mariadb
+		$> sudo chmod -R 777 /home/akaraca/data/mariadb
+		$> sudo chown -R 999:999 /home/akaraca/data/wordpress
+		$> sudo chmod -R 777 /home/akaraca/data/wordpress
+ 
+vim /etc/hosts
+	-> 127.0.0.1 akaraca.42.fr

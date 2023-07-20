@@ -1,0 +1,39 @@
+#TRASH
+SETUP THE NGINX without .yml
+https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-debian-10
+
+
+nginx basic work test:
+	definition root password:
+		$> sudo passwd
+
+	we can open debain apps with GWSL so we download firefox:
+		$> sudo apt install firefox-esr
+		test on firefox for location, put on the url: file:///home/akaraca/
+
+	setup for nginx:
+		$> sudo apt update
+		$> sudo apt upgrade
+		$> sudo apt install nginx
+
+	start to nginx server:
+		$> sudo service nginx start
+
+	check the nginx on web browser:
+		http://localhost
+
+
+firewall settings to allow outside access to the default web ports:
+	$> sudo apt install ufw
+	$> sudo ufw app list
+	#	As you can see, there are three profiles available for Nginx:
+
+		Nginx Full: This profile opens both port 80 (normal, unencrypted web traffic) and port 443 (TLS/SSL encrypted traffic)
+		Nginx HTTP: This profile opens only port 80 (normal, unencrypted web traffic)
+		Nginx HTTPS: This profile opens only port 443 (TLS/SSL encrypted traffic)
+
+	$> sudo ufw enable
+	$> sudo ufw numbered
+	$> sudo ufw allow 'Nginx HTTP'
+	$> sudo ufw status
+

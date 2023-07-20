@@ -26,7 +26,7 @@
 
 		Her hizmetin özel bir kapsayıcıda/container'da çalışması gerekir.
 
-		Performansla ilgili hususlar için, kaplar Alpine veya Debian'ın sondan bir önceki kararlı sürümünden oluşturulmalıdır.
+		Performansla ilgili hususlar için, kaplar(containers) Alpine veya Debian'ın sondan bir önceki kararlı sürümünden oluşturulmalıdır.
 			Hangi sistemin kullanılacağı size bırakılmıştır.
 
 		Ayrıca hizmet başına bir tane olmak üzere kendi Docker dosyalarınızı da yazmanız gerekir.
@@ -535,5 +535,13 @@ Not:
 		Dockerfile'da PID 1 sürecini belirlemek için, 'ENTRYPOINT' veya 'CMD' komutları kullanılır.
 		Bu komutlar, Docker container'ı başlattığında çalıştırılacak komut veya betiği belirlemenizi sağlar.
 		PID 1 süreci olarak belirledğiniz komut veya betik, container'ın ana süreci olarak çalışacak ve diğer süreçleri yönetebilecektir.
+
+	# Bu üç yazılım, web sunucusu (nginx), içerik yönetim sistemi (WordPress) ve veritabanı yönetim sistemi (MariaDB) olarak temel işlevleri yerine getirir ve projenizin gereksinimlerini karşılayacak şekilde tasarlanmıştır.
+		Özetle, projenizde aşağıdaki yazılımlara ihtiyacınız olacaktır:
+			Nginx: Web sunucu olarak kullanılacak, gelen HTTP isteklerini karşılayacak ve web sitenizin yayınlanmasını sağlayacak.
+			WordPress: İçerik yönetim sistemi olarak kullanılacak, web sitenizde içerik eklemek, düzenlemek ve yönetmek için kullanabileceğiniz bir platform sağlayacak.
+			MariaDB: Veritabanı yönetim sistemi olarak kullanılacak, WordPress'in verilerini saklayacak ve yönetecek, kullanıcıların, içeriklerin ve diğer bilgilerin depolanmasını sağlayacak.
+		Bu üç yazılımı kullanarak, bir web sitesini barındırmak, içerikler eklemek ve yönetmek, kullanıcıların veritabanı ile etkileşimini sağlamak ve web sitenizi yayınlamak için gerekli olan tüm temel işlevselliğe sahip olacaksınız.
+		Ek olarak, projenizde belirli özelliklere veya özel ayarlamalara ihtiyaç duyduğunuzda, bu üç yazılımın sunduğu esneklik sayesinde gerektiği gibi yapılandırabilir ve özelleştirebilirsiniz.
 
 */
