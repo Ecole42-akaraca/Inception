@@ -33,7 +33,7 @@ ENTRYPOINT [ "var/www/nginx.sh" ]
 ## ENTRYPOINT [ "executable" ]
 
 # Container başlatıldığında nginx'i çalıştır
-# 'CMD [ "nginx", "-g", "deamon off;" ]': Docker container'ını başlatırken çalışacak varsayılan komutu belirtir.
-#	Bu durumda, Nginx web sunucusunu başlatır ve "deamon off;" seçeneğiyle arka planda çalışmasını sağlar.
-CMD [ "nginx", "-g", "deamon off;" ]
+# 'CMD [ "nginx", "-g", "daemon off;" ]': Docker container'ını başlatırken çalışacak varsayılan komutu belirtir.
+#	Bu durumda, Nginx web sunucusunu başlatır ve "daemon off;" seçeneğiyle arka planda çalışmasını sağlar.
+CMD [ "nginx", "-g", "daemon off;" ]
 ## CMD [ "executable" ]

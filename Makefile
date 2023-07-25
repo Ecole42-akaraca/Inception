@@ -8,7 +8,7 @@
 # Docker Compose dosyaları ve dizinlerinin değişkenlerini tanımlayınız.
 COMPOSE_FILE := docker-compose.yml
 COMPOSE_DIR := .
-#COMPOSE_DIR := srcs
+#COMPOSE_DIR := ./srcs/
 
 # Gerekli programları yüklemek için hedefleri tanımlayınız.
 install: ## Install required programs / Gerekli programları kurunuz.
@@ -19,7 +19,7 @@ install: ## Install required programs / Gerekli programları kurunuz.
 clean: ## Clean up temporary files, logs, etc. / Geçici dosyaları, günlükleri vb. temizleyin.
 #	'docker-compose down --rmi all --volumes' komutu, yalnızca projenin altındaki Docker Compose dosyasında tanımlı olan container, volume ve network'leri kaldırır ve container'ların kullandığı image'leri de siler.
 # 		Bu, projeye özgü temizleme işlemidir ve sadece bu projeye ait olan bileşenleri etkiler.
-	docker-compose -f $(COMPOSE_FILE) -p $(COMPOSE_DIR) down --rmi all --volumes
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) down --rmi all --volumes
 #	'docker image prune -f' komutu, kullanılmayan (unreferenced) Docker image'leri siler.
 #		Bu komut, kullanılmayan tüm image'leri sistem genelinde tespit eder ve siler.
 #		Yani sadece projenize ait image'leri değil, sistemdeki diğer kullanılmayan image'leri de siler.
@@ -35,29 +35,36 @@ setup-data: ## Create necessary directories / Gerekli dizinleri oluşturun.
 	@mkdir -p $(HOME)/data/mariadb
 
 re: clean setup-data ## Recreate and start the containers (with rebuild) / Container'ları yeniden oluşturun ve başlatın.
-	docker-compose -f $(COMPOSE_FILE) -p $(COMPOSE_DIR) up --build -d
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) up --build -d
 
 # Docker Compose komutları için hedefleri tanımlayınız.
 up: setup-data ## Start the containers / Container'ları başlatın.
-	docker-compose -f $(COMPOSE_FILE) -p $(COMPOSE_DIR) up -d
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) up -d
 
 down: ## Stop and remove the containers / Container'ları durdurun ve temizleyin.
-	docker-compose -f $(COMPOSE_FILE) -p $(COMPOSE_DIR) down
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) down
 
 ps: ## List running containers / Çalışan Container'ları listeleyin.
-	docker-compose -f $(COMPOSE_FILE) -p $(COMPOSE_DIR) ps
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) ps
 
 logs: ## View container logs / Container günlüklerini görüntüleyin.
-	docker-compose -f $(COMPOSE_FILE) -p $(COMPOSE_DIR) logs -f
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) logs -f
 
 exec-nginx: ## Execute a command inside the nginx container / Nginx container'ı içinde komut çalıştırın.
-	docker-compose -f $(COMPOSE_FILE) -p $(COMPOSE_DIR) exec nginx sh
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) exec nginx sh
 
 exec-wordpress: ## Execute a command inside the wordpress container / Wordpress container'ı içinde komut çalıştırın.
-	docker-compose -f $(COMPOSE_FILE) -p $(COMPOSE_DIR) exec wordpress sh
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) exec wordpress sh
 
 exec-mariadb: ## Execute a command inside the mariadb container / Mariadb container'ı içinde komut çalıştırın.
-	docker-compose -f $(COMPOSE_FILE) -p $(COMPOSE_DIR) exec mariadb sh
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) exec mariadb sh
+
+containers:
+	docker container list --all
+
+run-nginx:
+	docker run -d --name nginx nginx
+
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:

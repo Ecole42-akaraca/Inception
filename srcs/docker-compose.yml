@@ -1,110 +1,23 @@
-#   https://stackoverflow.com/questions/56834171/nginx-docker-compose-volume-add-nginx-conf-reverse-proxy
-#   https://devops.tutorials24x7.com/blog/containerize-wordpress-with-nginx-php-mysql-and-phpmyadmin-using-docker-containers
-#   https://medium.com/swlh/wordpress-deployment-with-nginx-php-fpm-and-mariadb-using-docker-compose-55f59e5c1a
-#   https://www.docker.com/101-tutorial/
-#   https://github.com/vbachele/Inception/blob/main/README.md
-
-# - docker-compose.yml dosyası nedir? ne işe yarar?
-# - docker-compose.yml doyası, Docker Compose'un yapılandırma dosyasıdır.
-#   Docker Compose, birden çok Docker Containerını tek bir ortamda çalıştırmak, yapılandırmak ve yönetmek için kullanılan bir araçtır.
-#     Bu dosya, bu konteynerlar ve ilgili yapılandırmaları tanımlayan YAML dosyasıdır.
-
-# - Docker Compose nedir? ne işe yarar?
-# - Docker Compose, birden çok containerı başlatmayı ve bunların birbirleriyle etkileşim kurmasını kolaylaştırır.
-#   Bu dosya, konteynerlarınızın özelliklerini, bağımlılıklarını, ağ yapılandırmlarını, ortak volumleri vb. yapıları tanımlamak için kullanılır.
-#   Bu dosyada, proje ve uygulama bileşenlerinizi bir arada tanımlamanızı sağlar.
-#     Her bir bileşeni (servisi) ayrı ayrı yapılandırabilir, bağımlılıkları belirleyebilir ve gerektiğinde çeşitli yapılandırma seçenekleri sunabilirsiniz.
-#     Böylece, projenizin tüm bileşenlerini tek bir komutla başlatabilir, durdurabilir veya yönetebilirsiniz.
-#   Docker Compose, yapılandırma dosyası üzerinden projenizi yönetmek için komut satırı arayüzü sağlar.
-#     Örneğin, 'docker-compose up' komutuyla 'docker-compose.yml' dosyasına göre contanierları başlatabilir.
-#     'docker-compose down' komutuyla containerları durdurabilirsiniz.
-#     Ayıca, 'docker-compose ps', 'docker-compose logs', 'docker-compose exec' gibi komutlarla konteynerlarınızı denetleyebilir ve yönetebilirsiniz.
-#   Docker Compose, konteyner tabanlı uygulamaları hızlı bir şekilde geliştirmek, test etmek ve dağıtmak için yaygın olarak kullanılan bir araçtır.
-
-# - Dosya formatının hangi docker compose sürümü tarafından desteklendiğini belirtir. Versiyona göre farklı özelliklere sahiptir.
-#   Son sürümü 3.8'miş. Sürüm farklarını görmek için; https://docs.docker.com/compose/compose-file/compose-versioning/
 version: '3.8'
 
-# - Services kısmının altında bulunan her bir servisin adı spesifik değildir, kullanıcı tarafından belirlenebilir. Kullanılan ad benzersiz olmalıdır.
-#   Bu bölüm, Docker Compose'un temelini oluşturan ve kullanılan servisleri tanımladığımız yerdir.
-#   Servisler, projenizin bileşenlerini veya farklı hizmetlerinizi temsil edebilir. Örneğin, web sunucusu, veritabanı, mesaj kuyruğu veya başka bir mikro servis gibi.
-#   Docker containerlarının nasıl başlatılacağını, hangi image'in kullanılacağını, bağımlılıkları ve diğer yapılandırmalar gibi detayları içerir.
 services:
 
-# - Subjectte bizden nginx containerının oluşturulması isteniyor bu yüzden servis adını nginx olarak tanımlıyoruz.
   nginx:
-# - Serivisin oluşturacağı containera özel bir isim atamak için kullanıyoruz.
-#   Container özel bir isme sahip olduğundan dolayı, 'docker-compose stop nginx' şeklinde kullanabiliriz. (nginx ismini atadığımızdan dolayı)
     container_name: nginx
-# - Docker containerı için kullanılacak olan image'in adını veya Docker Hub'daki adresini belirtir.
-#   Docker image, bir uygulamanın veya hizmetin çalıştırılması için gereken tüm dosyaları, bağımlılıkları ve yapılandırmaları içeren önceden oluşturulmuş bir pakettir.
-#   Image'ler, Dockerfile adı verilen bir metin dosyası kullanılarak oluşturulur ve Docker tarafından bir containerın temel altyapısı olarak kullanılır.
-#   Kullanılacak olan image'in sürümü ':' iki noktadan sonra belirtilir.
-#     Verisyon numarası ile;                    nginx:1.3
-#     Son versiyon için;                        nginx:latest
-#     Belirli bir sürümü temsil etmek için:     nginx:buster
-#     Kararlı bir sürümü temsil etmek için:     nginx:stable
-#   !!! Hazır bir image kullanmamızı istemediğinden dolayı 'image' yerine 'build' parametresini kullanacağız.
-#    image: nginx:1.2
-# - 'build' parametresi, Docker Compose dosyasında bir servisin özel bir Docker image'ini oluşturmak için kullanılır.
-#   conf dosyası ve tool dosyasını kullanarak özel bir Docker Image oluşturacak ve belirtilen servisi başlatacaktır.
     build:
-# - 'context' parametresi, Dockerfile ve diğer dosyaların bulunduğu dizini belirtir.
-      context: ./requirements/nignx
-# - 'dockerfile' parametresi, özel Dockerfile'ın adını belirtir.
+      context: ./requirements/nginx
       dockerfile: Dockerfile
-# - 'args' parametresi, Dockerfile içinde kullanılacak olan yapılandırma dosyalarının adlarını ve yolunu belirmek için kullanılır.
-#   'CONF_FILE' ve 'TOOL_FILE' gibi değişken adları belirleyebilir ve onlara ilgili dosyaların adını atayabilirsiniz.
       args:
         - CONF_FILE=conf/nginx.conf
         - TOOL_FILE=tools/tool.sh
-# - 'volumes' parametresi, Docker Compose dosyasında bir servisin içindeki dosya veya dizinlerin, ana makine(host) veya diğer containerlarla paylaşmasını sağlayan bir parametredir.
-#   Servisin içindeki veirleri kalıcı bir şekilde saklamak, veri paylaşımını sağlamak veya containerlar arasında veri paylaşımını sağlamak için kullanılır.
-#   Subjectte göre, servis içinde dosya paylaşımı istendiğinden dolayı 'volumes' oluşturacağız. Bu 'services' parametresi dışında oluşturulmalıdır.
-#   Ana makinedeki bir dizini temsil etmek için ':' öncesine dizin, 'volumes' yapısını temsil etmek için ise nesne koyulur.
-#     ':' sonrası ise servisin dizinini temsil etmektedir.
-#   Burada, nginx servisi için bir volume oluşturulduğunu ve bu volume'ün 'wp_data' adıyla tanımlandığını gösterir.
-#     '/var/www/html' yolunu belirterek, 'nginx' servisinin bu volmue ile ilişkilendirilen dizindeki verileri kalıcı olarak sakladığını belirtir.
-#   'wp_data:/var/www/html' bu ifadede, veriler sol taraftaki 'wp_data' adlı Docker volume'üne kaydedilir yani saklancağını belirtir.
     volumes:
       - wp_data:/var/www/html
-# - 'ports' parametresi, Docker Compose dosyasında bir servisin dış dünyayla olan ağ bağlantısını tanımlamak için kullanılır.
-#   Bir servisin içinde çalışan bir uygulamanın belirli bir portunu ana makinedeki bir portla eşleştirmenizi sağlar.
-#   İki farklı şekilde kullanılabilir, basit port ve seri port eşleştirmesidir.
-#     Basit port eşleştirmesi: 'ANA_MAKİNE_PORTU:SERVİS_PORTU' şeklinde belirtilir.
-#       Bu durumda, belirtilen 'SERVİS_PORTU' servis içindeki uygulamanın çalıştığı portu temsil eder ve 'ANA_MAKİNE_PORTU' ise ana makinenin portunu temsil eder.
-#     Seri port eşleştirmesi: 'SERVİS_PORTU' şeklinde belirtilir. (ana makine portu yoktur)
-#       Bu durumda, sadece servis içinde çalışan uygulamanın belirli bir portu belirtilir ve ana makinede rastgele bir port atanır.
     ports:
       - "443:443"
-# - 'networks' parametresi, Docker Compose dosyasında bir servisin hangi ağlarda çalışacağını belirlemek için kullanılır.
-#   Belirli bir ağı veya birden fazla ağı bir servise atamak için kullanılabilir.
-#   Docker Compose ile ağlar, Docker containerları arasında iletişimi sağlamak için kullanılır.
-#   Servisler, aynı ağda yer alıyorsa birbirleriyle doğrudan iletişim kurabilirler.
-#   Özet: 'networks' parametresi, servisin hangi ağlara bağlı olacağını belirtirken, Docker Compose bu ağları oluşturur ve container'ları bu ağlara bağlar.
-#   Burada 'docker-network' adında bir ağa bağlı olduğu belirtilmiştir.
     networks:
       - docker-network
-# - 'depends_on' parametresi, Docker Compose dosyasında bir servisin başlamadan önce diğer bir veya birden fazla servisin başlamasını beklemek için kullanılır.
-#   Bu parametre, servisler arasındaki bağımlılıkları belirtmek için kullanılır.
-#     Belirtilen servislerin başlatılmasını veya yeniden başlatılmasını sağlar.
-#     Bu, belirli bir sıraya göre servislerin başlamasını kontrol etmek için kullanılabilir.
-#     Örneğin, bir veritabanı servisinin önce başlaması ve ardından web sunucusu servisinin başlaması gerekiyorsa, 'depends_on' parametresi kullanılır.
-#   Burada nginx servisi wordpress servisine bağlı olduğunu belirtir ve nginx başlatılmadan önce wordpress servisinin başlatılması beklenir.
-#   Bu parametre, yalnızca servislerin başlamasını kontrol eder, servislerin tam olarak kullanıma hazır olup olmadığını veya çalıştığını garanti etmez.
-#   Servislerin başlamasını ve kullanıma hazır hale gelmesini sağlamak için ilave önlemler almanız gerekebilir, örneğin beklemek veya hazır olduğunu doğrulamak için ek kontroller yapmak gerekir.
     depends_on:
       - wordpress
-# - 'restart' parametresi, Docker Compose dosyasında bir servisin nasıl yeniden başlatılacağını belirlemek için kullanılır.
-#     Bu parametre, servisin durma durumuna geldiğinde veya hata aldığında nasıl davranacağını tanımlar.
-#    'restart' parametresinin alabileceği değerler:
-#       'no': Bu, servisin hiçbir zaman otomatik olarak yeniden başlatılmayacağı anlamına gelir.
-#           Eğer servis durur veya hata alırsa, yeniden başlatılmaz.
-#       'always': Bu, servisin her zaman otomatik olarak yeniden başlatılacağı anlamına gelir.
-#           Eğer servis durur, hata alırsa veya herhangi bir nedenle kapanırsa, otomatik olarak yeniden başlatılır.
-#       'on-failure': Bu, servis sadece hata alırsa (exit code 0'dan farklı bir 'exit code' ile sonlanırsa) otomatik olarak yeniden başlatılacağı anlamına gelir.
-#       'unless-stopped': Bu, servis durmazsa veya kullanıcı tarafından durdurulmazsa otomatik olarak yeniden başlatılacağı anlmına gelir.
-#           Eğer kullanıcı servisi durdurusa, otomatik olarak yeniden başlatılmaz.
     restart: unless-stopped
 
   wordpress:
@@ -112,17 +25,8 @@ services:
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
-# - 'env_file' parametresi, Docker Compose dosyasında bir servisin çevresel değişkenlerini (env) bir dosyadan yüklemek için kullanılır.
-#   Çevresel değişkenleri tek bir veya birden fazla dosyadan almanıza olanak sağlar.
-#   Docker Compose, servislerin çalışma zamanında belirli çevresel değişkenlere ihtiyaç duyabileceği durumlarda kullanıcı tarafından belirtilen dosyalardan çevresel değişkenleri yükler.
-#   Farklı kullanım olarak, doğrudan dosyadan okumak yerine servis içindede env değişkenler atanabilir:
-#   environment:
-#     - WORDPRESS_DB_HOST: db
-#     - WORDPRESS_DB_NAME: mywordpressdb
-#     - WORDPRESS_DB_USER: mywordpressuser
-#     - WORDPRESS_DB_PASSWORD: mywordpresspassword
     env_file:
-      - ./env
+      - ./.env
     depends_on:
       - mariadb
     volumes:
@@ -137,60 +41,20 @@ services:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
     env_file:
-      - ./env
+      - ./.env
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - docker-network
     restart: unless-stopped
 
-# - Bu parametre, Docker Compose dosyasında belirtilen Docker volume'leri oluşturmak ve kullanmak için kullanılır.
-#   Docker Compose, bu volume'lerle veri kalıcığını sağlar, yani veriler container'lar silinse veya durdurulsa bile kalıcı kalır ve sonraki çalışmalarda erişilebilir olur.
-#   Docker Compose dosyasında iki farklı şekilde tanımlanır: isimli ve isimsiz volume
-#   isimli:  'volumes' parametresi, servislerin dışında kullanıldığı için, servis içinde bulunan 'volumes' ile aynı tanımlara sahipse isimli volume (Named Volume) olarak tanımalanır.
-#     İsizmli volume'ler, bir isimle belirtilir ve proje yaşam döngüsü boyunca kalıcıdır.
-#     Bu tür volume'ler, aynı ismi kullanan diğer Docker Compose projeleriyle de paylaşılabilir.
-#     Bu yapı, veri kalıcığını farklı projeler arasında sağlamak için kullanılır.
-#   isimsiz: Eğerki sadece servis kısmında 'volumes' parametresi varsa ve servis dışında bu parametreden kullanımadıysa bu yapıya isimsiz volume ('anonymous volume' veya 'unnamed volume') denir.
-#     İsimsiz volume'ler, bir ad ile belirtilmez ve Docker Compose tarafından otomatik olarak oluşturulur.
-#     Bu tür volume'ler, sadece Docker Compose projesi yaşam döngüsü içinde kullanılır ve başka projelerle paylaşılmaz.
-#     Bu yapı, aynı servisin birden fazla örneği arasında veri paylaşımı veya veri kalıcılığı için kullanılabilir.
-#   Burada 'isimli volume' yapısı kullanılmıştır.
-#   Bu yapı, 'Volumes top-level element' yani 'üst düzey hacim öğesi' olarak adlandırılır.
-#   https://docs.docker.com/compose/compose-file/07-volumes/
-volumes: # ana parametre
-# - 'wp_data' adlı hacim, bir adlandırılmış hacimdir.
-#   Yani bu hacim, 'wp_data' adıyla Docker'da kaydedilecektir ve daha sonra Docker Compose dosyasında bu adı kullanarak farklı servislerle bağlantı kurulabilir.
-#   'wp_data' adlı hacim, bir klasörü veya dosyayı temsil eder.
-#     Ancak, bu klasör veya dosya Docker ana bilgisayarında değil, Docker tarafından yönetilen bir alanda oluşturulur.
-#     Docker, konteynerlerin çalıştığı bir ortam oluşturur ve bu ortamda 'volumes' kullanarak verilerin ana bilgisayar veya konteynerler arasında taşınmasını sağlar.
-#     Docker Compose dosyasında belirtilen 'wp_data' adlı hacim, Docker tarafından özel bir konumda oluşturulur ve Docker'a aittir.
-#   Klasörün fiziksel konumu Docker'ın kullanıldığı işletim sisteminde bulunur ve bu klasör Docker'ın veri hacimlerini saklamak için kullanıldığı özel bir veri yönetim mekanizması tarafından yönetilir.
-#     Bu konum, genellikle Docker tarafından yapılandırılan ve yalnızca Docker tarafından erişilebilen bir yerde bulunur.
-#     Konteynerler bu veri hacimine bağlandığında, Docker tarafından sağlanan veri yönetim mekanizması, verilerin konteyner içindeki ilgili yoluyla eşleşmesini ve erişilebilir olmasını sağlar.
-#   Docker kullanıcıları için bu detaylar genellikle göz önünde bulundurulmaz, çünkü Docker veri yönetimini arkada otomatik olarak yönetir ve kullanıcılara basit ve etkili bir veri saklama ve paylaşım çözümü sunar.
-#     Dolayısıyla, 'wp_data' adlı hacim, Docker tarafından yönetilen bir alanda oluşturulan ve verilerin saklandığı özel bir klasörü veya dosyayı temsil eder.
-  wp_data: # alt parametre
-# - 'name' parametresi, bir volume'a isim atamak için kullanılır.
-#   Özellikle isimli volume'ler oluştururken kullanılabilir. 
+volumes:
+  wp_data:
     name: wp_data
-# - 'driver' parametresi, Docker Compose'da bir volume için kullanılan varsayılan storage driver'ını belirtir.
-#   Docker, farklı stroga driver'ları kullanarak volume'leri farklı şekillerde uygular.
-#   'driver: local', Docker Compose'da bir 'bind mount' (yerel dosya sistemi ile container dosya sistemi arasında doğrudan bağlantı) yaratmak için kullanılan yerel bir storage driver'ıdır.
-#   Bind mount, host işletim sisteminde bulunan bir dizini(kaynak dizini) direkt olarak bir container içindeki dizine(hedef dizin) monte etmeyi sağlar.
-#     Böylece, container içindeki dosyaların değişiklikleri, host dizininde de görülebilir ve aynı şekilde host dizininde yapılan değişiklikler de container içindeki dosyalarda görünür.
-#     Bu şekilde, dosyaların ve verilerin container ve host arasında paylaşımı kolaylıkla sağlanır.
     driver: local
-# - 'driver_opts' parametresi, stroger driver'ı için ek seçenekler tanımlanır.
     driver_opts:
-# - 'type' parametresi, Volume tipini belirtir.
-#   "none" ifadesi, türsüz olduğunu yani bind mount kullanıldığını belirtir.
       type: none
-# - 'o' parametresi, bind mount için mount seçeneklerini belirtir.
-#   "bind" ifadesi, host dosya sistemi ile container dosya sistemi arasında doğrudan bağlantı kurulduğunu belirtir.
       o: bind
-# - 'device' parametresi, Volume'ün bağlanacağı fiziksel host dizinini belirtir.
-#   "$HOME/data/wordpress" ifadesi, '$HOME/data/wordpress' dizini, container'ın nginx için '/var/www/html' dizinine bağlanacak ve bu sayede 'wp_data' volume'ü, nginx servisi içinde '/var/www/html' diziniyle ilişkilendirilecektir.
       device: $HOME/data/wordpress
 
   db_data:
@@ -201,33 +65,7 @@ volumes: # ana parametre
       o: bind
       device: $HOME/data/mariadb
 
-# - Docker Compose, 'docker-network' adında bir ağ oluşturur.
-#   Bu parametre, özellikle birden fazla servis arasında iletişim gerektiren çoklu servis uygulamaları için kullanışlıdır.
-#   Birden fazla servisi aynı ağda bağlamak, servisler arasında veri paylaşımını ve iletişimi kolaylaştırır.
-#   Bu yapı, 'Networks top-level element' yani 'üst düzey internet öğesi' olarak adlandırılır.
-#   https://docs.docker.com/compose/compose-file/06-networks/
 networks:
-# - 'docker-network' parametresi, tanımlanan ağın adıdır ve diğer servislerde de aynı isimle kullanılabilir.
-#   Aynı isimdeki ağ, Docker Compose projesi içinde benzersiz bir ağ olarak kabul edilir.
   docker-network:
-# - 'name' parametresi, opsiyonel olarak ağa verilen ismi temsil eder.
-#   Bu ad, daha okunabilir bir şekilde ağı tanımlamak için kullanılır.
-#   Gerçekten gerekli değildir, çünkü ağ zaten 'docker-network' adıyla tanımlanmıştır.
     name: docker-network
-# - 'driver' parametresi, bir ağın hangi ağ sürücüsünü kullanacağını belirten bir alt parametredir.
-#     Bir ağın sürücüsü, ağın nasıl davranacağını ve hangi özelliklere sahip olacağını belirler.
-#   Docker Compose, farklı ağ sürücüleri kullanarak farklı ağ tipleri sağlar.
-#     Yaygın olarak kullanılan bazı ağ sürücüleri:
-#       'bridge': Bu sürücü, Docker Compose'un varsayılan ağ sürücüsüdür. (yerel ağ)
-#         Container'ların birbirleriyle iletişim kurmasını sağlar ve aynı ağda çalışan contaniler'lar birbirleriyle doğrudan bağlantı kurabilir.
-#         Projenizin içindeki container'ları yalıtarak, dışarıdaki diğer ağlardan izole eder.
-#         Eğerki 'driver' parametresi belirtilmez ise bu ağ sürücüsü kullanılacaktır.
-#         Bir Docker Compose projesi başlatıldığında, her servis otomatik olarak 'bridge' sürücüsü altında çalışan aynı ağa dahil olur.
-#       'overlay': Bu sürücü, farklı Docker hostları arasında çalışan container'lar arasında iletişim kurmayı sağlar.
-#         Contanier'ları farklı Docker hostları üzerinde birbirine bağlar ve çeşitli uygulamaları yüksek kullanılabilirlikli dağıtık sistemler oluşturmak için kullanılabilir.
-#       'macvlan': Bu sürücü, container'lara fiziksel ağdaki bir MAC adresi atayarak container'ları doğrudan fiziksel ağa bağlar.
-#         Bu sayede contanier'lar, fiziksel ağ üzerinde doğrudan IP adresiyle çalışır ve fiziksel ağdaki diğer cihazlarla doğrudan iletişim kurabilir.
-#       'host': Bu sürücü, container'ları Docker hostu üzerindeki host ağına bağlar.
-#         Container'lar, host IP adresiyle çalışır ve host ağındaki diğer cihazlarla doğrudan iletişim kurabilir.
-#         Container'ları ayrı bir ağ izolasyonu olmadan çalıştırmak için kullanılabilir.
     driver: bridge
