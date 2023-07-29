@@ -7,8 +7,8 @@
 
 # Docker Compose dosyaları ve dizinlerinin değişkenlerini tanımlayınız.
 COMPOSE_FILE := docker-compose.yml
-COMPOSE_DIR := .
-#COMPOSE_DIR := ./srcs/
+#COMPOSE_DIR := .
+COMPOSE_DIR := ./srcs/
 
 # Gerekli programları yüklemek için hedefleri tanımlayınız.
 install: ## Install required programs / Gerekli programları kurunuz.

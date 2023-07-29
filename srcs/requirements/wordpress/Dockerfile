@@ -27,14 +27,36 @@ RUN apt-get update && apt-get install -y \
 		php-zip \
 		php-fpm
 
-COPY ./conf/wp-config.php /var/www/html/wp-config.php
+# COPY ./conf/wp-config.php /var/www/html/wp-config.php
 
-RUN yum --enablerepo=remi-php73 -y install php php-bcmath php-cli php-common php-gd php-intl php-ldap php-mbstring \
-    php-mysqlnd php-pear php-soap php-xml php-xmlrpc php-zip php-fpm
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+COPY ./tools/create-wp.sh /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/create-wp.sh
+
+WORKDIR /var/www/html/
+
+# RUN apt-get install -y \
+# 	php \
+# 	php-bcmath \
+# 	php-cli \
+# 	php-common \
+# 	php-gd \
+# 	php-intl \
+# 	php-ldap \
+# 	php-mbstring \
+#     php-mysqlnd \
+# 	php-pear \
+# 	php-soap \
+# 	php-xml \
+# 	php-xmlrpc \
+# 	php-zip \
+# 	php-fpm
 
 # Port 9000'i dışarıya aç
 EXPOSE 9000
 
 # php-fpm serverını başlat
-CMD [ "php-fpm" ]
+#CMD [ "php-fpm" ]
 # CMD [ "/usr/sbin/php-fpm7.3", "--nodaemonize" ]
+CMD ["/usr/local/bin/create-wp.sh", "/usr/sbin/php-fpm7.3", "-F"]
