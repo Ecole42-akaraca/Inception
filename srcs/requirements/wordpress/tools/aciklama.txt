@@ -1,0 +1,9 @@
+
+WordPress containerı için kullanılabilecek bazı tools dosyaları şunlardır:
+
+wp-cli.sh - WordPress komut satırı arayüzünün (CLI) bir kabuk betiğidir. Bu dosya, WordPress'in CLI'sını kullanarak WordPress sitenizi yönetmenizi sağlar.
+wp-config.php - WordPress'in en önemli dosyalarından biridir. WordPress'in veritabanını, şifreleme ayarlarını ve diğer önemli ayarları içerir.
+wp-includes - WordPress'in dahili dosyalarının bulunduğu dizindir. Bu dizinde, WordPress'in temel işlevlerini sağlayan PHP dosyaları bulunur.
+wp-content - WordPress'in içeriğinin bulunduğu dizindir. Bu dizinde, WordPress temaları, eklentileri ve yazılar bulunur.
+wp-admin - WordPress yönetim panelinin bulunduğu dizindir. Bu dizinde, WordPress sitenizi yönetmek için kullanabileceğiniz araçlar bulunur.
+Bu dosyalar, WordPress containerı oluşturmak ve yönetmek için gereklidir.

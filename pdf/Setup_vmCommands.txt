@@ -14,7 +14,10 @@ After:
 	$> su
 		password: 1
 	$> apt-get install sudo
-	$> sudo usermod -aG sudo akaraca
+	$> sudo usermod -aG sudo akaraca 
+		$> sudo visudo 
+			-> add user_name ALL=(ALL:ALL) ALL
+			-> for save: ctrl+x
 	$> apt-get install vim -y
 	$> apt-get update -y
 	$> apt-get upgrade -y
@@ -61,3 +64,25 @@ After:
  
 vim /etc/hosts
 	-> 127.0.0.1 akaraca.42.fr
+
+
+for debian low interface: $> sudo apt-get install lxde
+						  $> sudo apt-get install openbox
+
+
+how to setup only wordpress image:
+	$> sudo apt-get install docker.io
+	$> sudo docker pull wordpress
+	$> sudo docker run -p 80:80 -d wordpress
+	$> sudo docker ps
+	$> sudo docker exec -it container_id bash
+	$> sudo docker stop container_id
+
+
+how to setup only mariadb image:
+	$> sudo apt-get install docker.io
+	$> sudo docker pull mariadb
+	$> sudo docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password mariadb
+	$> sudo docker exec -it container_id bash
+	$> sudo docker stop container_id
+-> maridb config file : /etc/mysql

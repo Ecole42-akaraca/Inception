@@ -1,0 +1,7 @@
+WordPress containerı için kullanılabilecek bazı config dosyaları şunlardır:
+
+docker-compose.yml - Docker Compose'in ana yapılandırma dosyasıdır. Bu dosya, Docker Compose'in bir veya daha fazla konteynırı nasıl oluşturacağını ve başlatacağını tanımlar.
+wp-config.php - WordPress'in en önemli dosyalarından biridir. WordPress'in veritabanını, şifreleme ayarlarını ve diğer önemli ayarları içerir.
+nginx.conf - Nginx web sunucusunun yapılandırma dosyasıdır. Bu dosya, Nginx web sunucusunun nasıl çalışacağını tanımlar.
+php.ini - PHP'nin yapılandırma dosyasıdır. Bu dosya, PHP'nin nasıl çalışacağını tanımlar.
+Bu dosyalar, WordPress containerı oluşturmak ve yönetmek için gereklidir.
