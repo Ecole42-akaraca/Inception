@@ -1,0 +1,159 @@
+<?php
+/**
+ * @note from Gorkem SEVER(gsever).
+ * 
+ * How can you find this file?
+ * Create a Docker container,
+ * run a cmd: "docker run -it --name test-wordpress-wp-config-php-file debian:buster"
+ * run a cmd: "apt install wordpress"
+ * run a cmd: "apt update && apt upgrade -y && apt install -y wordpress"
+ * run a cmd: "cd /usr/share/wordpress"
+ * run a cmd: "vim wp-config-sample.php"
+ * There is it! This file from there.
+ * 
+ * OR
+ * 
+ * Create a Docker container,
+ * run a cmd: "docker run -it --name test-wordpress-wp-config-php-file debian:buster"
+ * run a cmd: "apt update && apt upgrade -y"
+ * run a cmd: "cd /tmp && wget https://wordpress.org/latest.tar.gz"
+ * run a cmd: "tar -xzvf latest.tar.gz"
+ * run a cmd: "cp -R wordpress /var/www/html/"
+ * run a cmd: "chown -R www-data:www-data /var/www/html/wordpress/"
+ * run a cmd: "chmod -R 755 /var/www/html/wordpress/"
+ * run a cmd: "cd /var/www/html/wordpress/"
+ * run a cmd: "vim wp-config-sample.php"
+ * There is it! This file from there.
+ * 
+ * @note How can i use environment values form .env file.
+ * @link https://stackoverflow.com/questions/9300950/using-environment-variables-in-wordpress-wp-config
+ */
+
+/**
+ * @note This for .env file from root location.
+ * @link https://stackoverflow.com/questions/9300950/using-environment-variables-in-wordpress-wp-config
+ */
+$app_env = getenv("APP_ENV");
+$file = $app_env == null ? ".env" : ".env".$app_env;
+if (file_exists(__DIR__. '/'.$file))
+{
+	require_once(__DIR__.'/vendor/autoload.php');
+	(Dotenv\Dotenv::createUnsafeImmutable(__DIR__, $file))->load();
+	error_log("Environment loaded from ".$file);
+}
+else
+{
+	error_log("*WARNING* environment file not found: ".$file);
+}
+
+/**
+ * The base configuration for WordPress
+ *
+ * The wp-config.php creation script uses this file during the installation.
+ * You don't have to use the web site, you can copy this file to "wp-config.php"
+ * and fill in the values.
+ *
+ * This file contains the following configurations:
+ *
+ * * Database settings
+ * * Secret keys
+ * * Database table prefix
+ * * ABSPATH
+ *
+ * @link https://wordpress.org/documentation/article/editing-wp-config-php/
+ *
+ * @package WordPress
+ */
+
+// ** Database settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define( 'DB_NAME', getenv('MYSQL_DATABASE_NAME') );
+
+/** Database username */
+define( 'DB_USER', getenv('MYSQL_USERNAME') );
+
+/** Database password */
+define( 'DB_PASSWORD', getenv('MYSQL_DATABASE_PASSWORD') );
+
+/** Database hostname */
+define( 'DB_HOST', getenv('MYSQL_HOSTNAME') );
+
+/** Database charset to use in creating database tables. */
+define( 'DB_CHARSET', getenv('MYSQL_CHARSET') );
+
+/** The database collate type. Don't change this if in doubt. */
+define( 'DB_COLLATE', getenv('MYSQL_COLLATE') );
+
+/**
+ * BONUS AREA
+ */
+// /** Redis cache settings. */
+// define('WP_CACHE', true);
+// define('WP_CACHE_KEY_SALT', 'fcil.42.fr');
+
+// /** Try Redis container */
+// define('WP_REDIS_HOST', 'redis');
+// define('WP_REDIS_PORT', 6379);
+// // define( 'WP_REDIS_PASSWORD', '$REDIS_PWD' );
+// define('WP_REDIS_TIMEOUT', 1);
+// define('WP_REDIS_READ_TIMEOUT', 1);
+// define('WP_REDIS_DATABASE', 0);
+
+/**#@+
+ * Authentication unique keys and salts.
+ *
+ * Change these to different unique phrases! You can generate these using
+ * the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}.
+ *
+ * You can change these at any point in time to invalidate all existing cookies.
+ * This will force all users to have to log in again.
+ *
+ * @since 2.6.0
+ */
+define( 'AUTH_KEY',         'put your unique phrase here' );
+define( 'SECURE_AUTH_KEY',  'put your unique phrase here' );
+define( 'LOGGED_IN_KEY',    'put your unique phrase here' );
+define( 'NONCE_KEY',        'put your unique phrase here' );
+define( 'AUTH_SALT',        'put your unique phrase here' );
+define( 'SECURE_AUTH_SALT', 'put your unique phrase here' );
+define( 'LOGGED_IN_SALT',   'put your unique phrase here' );
+define( 'NONCE_SALT',       'put your unique phrase here' );
+
+/**#@-*/
+
+/**
+ * WordPress database table prefix.
+ *
+ * You can have multiple installations in one database if you give each
+ * a unique prefix. Only numbers, letters, and underscores please!
+ */
+$table_prefix = 'wp_';
+
+/**
+ * For developers: WordPress debugging mode.
+ *
+ * Change this to true to enable the display of notices during development.
+ * It is strongly recommended that plugin and theme developers use WP_DEBUG
+ * in their development environments.
+ *
+ * For information on other constants that can be used for debugging,
+ * visit the documentation.
+ *
+ * @link https://wordpress.org/documentation/article/debugging-in-wordpress/
+ */
+define( 'WP_DEBUG', false );
+
+/* Add any custom values between this line and the "stop editing" line. */
+
+
+
+/* That's all, stop editing! Happy publishing. */
+
+/** Absolute path to the WordPress directory. */
+if ( ! defined( 'ABSPATH' ) ) {
+	define( 'ABSPATH', __DIR__ . '/' );
+}
+
+/** Sets up WordPress vars and included files. */
+require_once ABSPATH . 'wp-settings.php';
+?>

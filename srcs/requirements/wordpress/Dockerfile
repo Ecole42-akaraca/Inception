@@ -17,19 +17,41 @@ FROM debian:buster
 #	php-mbstring: PHP'nin çok dilli metinleri işlemesini sağlayan bir uzantıdır.
 #	php-xml: PHP'nin XML belgelerini işlemesini sağlayan bir uzantıdır.
 #	php-zip: PHP'nin ZIP dosyalarını işlemesini sağlayan bir uzantıdır.
+# RUN apt-get update && apt-get install -y \
+# 		php7.3 \
+#  		php-mysql \
+# 		php-curl \
+# 		php-gd \
+# 		php-mbstring \
+# 		php-xml \
+# 		php-zip \
+# 		php-fpm
+
 RUN apt-get update && apt-get install -y \
-		php7.3 \
- 		php-mysql \
-		php-curl \
-		php-gd \
-		php-mbstring \
-		php-xml \
-		php-zip \
-		php-fpm
+	wget \
+	curl \
+	vim \
+	bash \
+	php7.3 php7.3-fpm\
+	php-cgi \
+	php-mysql \
+	php-fpm \
+	php-pdo \
+	php-gd php-cli \
+	php-mbstring \
+	redis \
+	php-redis
 
 # COPY ./conf/wp-config.php /var/www/html/wp-config.php
 
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+	&& chmod +x wp-cli.phar \
+	&& mv wp-cli.phar /usr/local/bin/wp
+
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+
+RUN mkdir -p /run/php
+
 COPY ./tools/create-wp.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/create-wp.sh

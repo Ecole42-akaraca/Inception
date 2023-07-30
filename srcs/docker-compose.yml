@@ -1,29 +1,42 @@
 version: '3.8'
 
-services:
+networks:
+  docker-network:
+    driver: bridge
 
-  nginx:
-    container_name: nginx
+volumes:
+  wp_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $HOME/data/wordpress
+
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $HOME/data/mariadb
+
+services:
+  mariadb:
+    container_name: mariadb
     build:
-      context: ./requirements/nginx
+      context: ./requirements/mariadb/
       dockerfile: Dockerfile
-      args:
-        - CONF_FILE=conf/nginx.conf
-        - TOOL_FILE=tools/tool.sh
+    env_file:
+      - ./.env
     volumes:
-      - wp_data:/var/www/html
-    ports:
-      - "443:443"
+      - db_data:/var/lib/mysql
     networks:
       - docker-network
-    depends_on:
-      - wordpress
     restart: unless-stopped
 
   wordpress:
     container_name: wordpress
     build:
-      context: ./requirements/wordpress
+      context: ./requirements/wordpress/
       dockerfile: Dockerfile
     env_file:
       - ./.env
@@ -35,37 +48,22 @@ services:
       - docker-network
     restart: unless-stopped
 
-  mariadb:
-    container_name: mariadb
+  nginx:
+    container_name: nginx
     build:
-      context: ./requirements/mariadb
+      context: ./requirements/nginx/
       dockerfile: Dockerfile
-    env_file:
-      - ./.env
     volumes:
-      - db_data:/var/lib/mysql
+      - wp_data:/var/www/html
+    ports:
+      - "443:443"
     networks:
       - docker-network
+    depends_on:
+      - wordpress
     restart: unless-stopped
 
-volumes:
-  wp_data:
-    name: wp_data
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $HOME/data/wordpress
 
-  db_data:
-    name: db_data
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $HOME/data/mariadb
 
-networks:
-  docker-network:
-    name: docker-network
-    driver: bridge
+
+

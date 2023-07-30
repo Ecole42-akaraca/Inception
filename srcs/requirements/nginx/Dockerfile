@@ -8,8 +8,18 @@ FROM debian:buster
 
 # 'RUN apt-get update && apt-get install -y nginx openssl': Image'de çalıştırılacak komutları belirtir.
 # 	İlk olarak, paket yöneticisi apt-get ile paket listesi güncellenir ve ardından Nginx ve OpenSSL paketleri yüklenir.
-RUN apt-get update && apt-get install -y nginx openssl
+# RUN apt-get update && apt-get install -y nginx openssl
 ## RUN command
+
+RUN apt-get update && apt-get install -y \
+	--no-install-recommends apt-utils \
+	nginx \
+	openssl
+
+# RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
+# 	-out /etc/ssl/certs/akaraca.crt \
+# 	-keyout /etc/ssl/certs/akaraca.key \
+# 	-subj "/C=TR/ST=Kocaeli/L=Istanbul/O=Ecole42/OU=akaraca/CN=akaraca"
 
 # Yapılandırma dosyalarının kopyalanması
 # 'COPY ./conf/nginx.conf /etc/nginx/conf.d/': Proje dosyaları içindeki 'nginx.conf' dosyasını, Nginx'in yapılandırma dosyalarının bulunduğu dizine kopyalar.
@@ -25,7 +35,8 @@ EXPOSE 443
 ## EXPOSE port
 
 # 'RUN chmod +x /var/www/nginx.sh': Kopyalanan 'nginx.sh' dosyasının çalıştırılabilir olmasını sağlar.
-RUN chmod +x /var/www/nginx.sh
+# RUN chmod +x /var/www/nginx.sh
+RUN cp /etc/ssl/certs/akaraca.crt /var/www/html/
 
 # 'ENTRYPOINT [ "var/www/nginx.sh" ]': Docker container'ı başlatıldığında otomatik olarak çalışacak ana komutu belirtir.
 #	Burada '/var/www/nginx.sh' dosyası başlatma komutu olarak tanımlanır.

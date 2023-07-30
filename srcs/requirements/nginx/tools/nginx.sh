@@ -4,10 +4,10 @@
 
 if [ ! -f /etc/ssl/certs/nginx.crt ]; then
 echo "Nginx: setting up ssl ...";
-openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
-	-keyout /etc/ssl/private/nginx.key \
-	-out /etc/ssl/certs/nginx.crt \
-	-subj "/C=TR/ST=KOCAELI/L=GEBZE/O=42Kocaeli/CN=akaraca.42.fr";
+openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
+	-out /etc/ssl/certs/akaraca.crt \
+	-keyout /etc/ssl/certs/akaraca.key \
+	-subj "/C=TR/ST=Kocaeli/L=Istanbul/O=Ecole42/OU=akaraca/CN=akaraca"
 echo "Nginx: ssl is set up!";
 fi
 
