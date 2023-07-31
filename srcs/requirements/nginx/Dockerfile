@@ -11,10 +11,11 @@ FROM debian:buster
 # RUN apt-get update && apt-get install -y nginx openssl
 ## RUN command
 
-RUN apt-get update && apt-get install -y \
-	--no-install-recommends apt-utils \
+RUN	apt-get update && apt-get install -y \
 	nginx \
 	openssl
+
+RUN mkdir /etc/nginx/ssl
 
 # RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
 # 	-out /etc/ssl/certs/akaraca.crt \
@@ -35,8 +36,10 @@ EXPOSE 443
 ## EXPOSE port
 
 # 'RUN chmod +x /var/www/nginx.sh': Kopyalanan 'nginx.sh' dosyasının çalıştırılabilir olmasını sağlar.
-# RUN chmod +x /var/www/nginx.sh
-RUN cp /etc/ssl/certs/akaraca.crt /var/www/html/
+RUN chmod +x /var/www/nginx.sh
+
+# Bu dizin, Nginx web sunucusu tarafından geçici dosyalar için kullanılır.
+RUN mkdir -p /run/nginx
 
 # 'ENTRYPOINT [ "var/www/nginx.sh" ]': Docker container'ı başlatıldığında otomatik olarak çalışacak ana komutu belirtir.
 #	Burada '/var/www/nginx.sh' dosyası başlatma komutu olarak tanımlanır.

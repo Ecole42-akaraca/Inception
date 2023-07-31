@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 
 networks:
   docker-network:
@@ -55,15 +55,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - wp_data:/var/www/html
-    ports:
-      - "443:443"
     networks:
       - docker-network
     depends_on:
       - wordpress
     restart: unless-stopped
-
-
-
-
-
