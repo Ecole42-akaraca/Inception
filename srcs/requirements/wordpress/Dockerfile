@@ -3,6 +3,10 @@
 # https://conetix.com.au/blog/what-is-a-dockerfile/
 # https://www.wordpressdocker.com/
 # https://stackoverflow.com/questions/66086184/exec-php-fpm-executable-file-not-found-in-path-unknown
+# wp-login.php
+# wp-admin.php //ekli değil
+# localhost
+# wp-admin
 
 # Subjectte Dockerfile için Alpine veya Debian kullanılması önerilmektedir, bu yüzden kararlı olan bir önceki sürüm tercih edilmiştir.
 FROM debian:buster
