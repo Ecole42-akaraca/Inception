@@ -16,7 +16,10 @@ COPY ./tools/create_wp_db.sql /var/www/
 #RUN chown mysql:mysql /etc/mysql/mariadb.conf.d/50-server.cnf
 RUN chmod 600 /etc/mysql/mariadb.conf.d/50-server.cnf
 
-RUN service mysql start && mysql < /var/www/create_wp_db.sql && rm -f /var/www/create_wp_db.sql
+RUN chmod +x /var/www/create_wp_db.sql
+
+# ??
+RUN service mysql start && mysql < /var/www/create_wp_db.sql && rm -f /var/www/create_wp_db.sql;
 
 # CMD ["mysqld"]
 # MariaDB servisini arka planda başlat
