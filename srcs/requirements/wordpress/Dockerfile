@@ -17,17 +17,20 @@ FROM debian:buster
 #	php-mbstring: PHP'nin çok dilli metinleri işlemesini sağlayan bir uzantıdır.
 #	php-xml: PHP'nin XML belgelerini işlemesini sağlayan bir uzantıdır.
 #	php-zip: PHP'nin ZIP dosyalarını işlemesini sağlayan bir uzantıdır.
-RUN apt-get update && apt-get install -y \
-		php7.3 \
- 		php-mysql \
-		php-curl \
-		php-gd \
-		php-mbstring \
-		php-xml \
-		php-zip \
-		php-fpm \
-		curl \
-		&& rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get -y install \
+ wget \
+ curl \
+ bash \
+ php \
+ php-cgi \
+ php-mysql \
+ php-fpm \
+ php-pdo \
+ php-gd php-cli \
+ php-mbstring \
+ redis \
+ php-redis \
+ && rm -rf /var/lib/apt/lists/*
 
 # COPY ./conf/wp-config.php /var/www/html/wp-config.php
 
@@ -38,13 +41,13 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
 
-RUN mkdir -p /run/php
+RUN mkdir /run/php
 
 COPY ./tools/create-wp.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/create-wp.sh
 
-# ENTRYPOINT ["/usr/local/bin/create_wordpress.sh"]
+ENTRYPOINT ["/usr/local/bin/create-wp.sh"]
 
 WORKDIR /var/www/html/
 
@@ -53,5 +56,5 @@ EXPOSE 9000
 
 # php-fpm serverını başlat
 #CMD [ "php-fpm" ]
-# CMD [ "/usr/sbin/php-fpm7.3", "--nodaemonize" ]
-CMD ["/usr/local/bin/create-wp.sh", "/usr/sbin/php-fpm7.3", "-F"]
+CMD [ "/usr/sbin/php-fpm7.3", "-F" ]
+# CMD ["/usr/local/bin/create-wp.sh", "/usr/sbin/php-fpm7.3", "-F"]
