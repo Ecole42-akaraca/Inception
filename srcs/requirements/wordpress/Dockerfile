@@ -26,11 +26,12 @@ RUN apt-get update && apt-get install -y \
 		php-xml \
 		php-zip \
 		php-fpm \
+		curl \
 		&& rm -rf /var/lib/apt/lists/*
 
 # COPY ./conf/wp-config.php /var/www/html/wp-config.php
 
-# WordPress CLI'ı wp komutuyla çalıştırabilirsiniz.
+# WordPress CLI'ı wp komutuyla çalıştırabilirsiniz. Bu yapı için curl kurulu olması gerekemektedir.
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
 	&& chmod +x wp-cli.phar \
 	&& mv wp-cli.phar /usr/local/bin/wp

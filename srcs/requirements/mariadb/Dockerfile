@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y \
 
 EXPOSE 3306
 
-COPY 50-server.cnf /etc/mysql/mariadb.conf.d/
-COPY create_database.sql /var/www/
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
+COPY ./tools/create_database.sql /var/www/
 
 RUN service mysql start && mysql < /var/www/create_database.sql && rm -f /var/www/create_database.sql;
 
