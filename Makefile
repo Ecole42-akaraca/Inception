@@ -62,8 +62,16 @@ containers:
 	docker container list --all
 
 run-nginx:
-	docker run -d --name nginx nginx
+	docker run -d --name nginx 
 
+bash-nginx:
+	docker exec -it nginx bash
+
+logs-nginx:
+	docker logs nginx
+
+inspect-nginx:
+	docker inspect nginx
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:
