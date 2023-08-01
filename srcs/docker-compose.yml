@@ -62,3 +62,16 @@ services:
     depends_on:
       - wordpress
     restart: unless-stopped
+
+  adminer:
+    container_name: adminer
+    build:
+      context: ./requirements/bonus/adminer
+      dockerfile: Dockerfile
+      ports:
+        - "9000"
+      depends_on:
+        - mariadb
+      network:
+        - docker-network
+      restart: unless-stopped
