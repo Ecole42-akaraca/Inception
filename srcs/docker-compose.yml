@@ -68,10 +68,10 @@ services:
     build:
       context: ./requirements/bonus/adminer
       dockerfile: Dockerfile
-      ports:
-        - "9000"
-      depends_on:
-        - mariadb
-      network:
-        - docker-network
-      restart: unless-stopped
+    ports:
+      - "9000"
+    depends_on:
+      - mariadb
+    networks:
+      - docker-network
+    restart: unless-stopped
