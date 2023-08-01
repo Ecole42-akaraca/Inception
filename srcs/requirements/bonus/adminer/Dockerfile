@@ -5,9 +5,14 @@ FROM debian:buster
 # Adminer'in sürümünü belirleyebilirsiniz, örneğin: 4.8.1
 ARG ADMINER_VERSION=latest
 
+RUN apt-get update && apt-get -y install \
+	wget
+
 # Adminer'i indirip /var/www/html klasörüne kopyalıyoruz
-RUN apt-get update && apt-get install -y wget \
-    && wget https://github.com/vrana/adminer/releases/download/${ADMINER_VERSION}/adminer-${ADMINER_VERSION}.php -O /var/www/html/adminer.php \
+
+RUN mkdir /var/www/html
+
+RUN wget https://github.com/vrana/adminer/releases/download/${ADMINER_VERSION}/adminer-${ADMINER_VERSION}.php -O /var/www/html/adminer.php \
     && apt-get purge -y wget \
     && rm -rf /var/lib/apt/lists/*
 
