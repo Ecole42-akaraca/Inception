@@ -4,6 +4,10 @@
 #   https://www.docker.com/101-tutorial/
 #   https://github.com/vbachele/Inception/blob/main/README.md
 
+# vim /etc/hosts
+# add 127.0.0.1 akaraca.42.fr
+
+
 # - docker-compose.yml dosyası nedir? ne işe yarar?
 # - docker-compose.yml doyası, Docker Compose'un yapılandırma dosyasıdır.
 #   Docker Compose, birden çok Docker Containerını tek bir ortamda çalıştırmak, yapılandırmak ve yönetmek için kullanılan bir araçtır.

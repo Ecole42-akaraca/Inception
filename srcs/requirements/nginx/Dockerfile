@@ -1,4 +1,5 @@
 # https://www.baeldung.com/linux/nginx-docker-container
+# in image: nginx -t
 
 # Subject: Container'lar Alpine veya Debian'ın sondan bir önceki kararlı sürümünden oluşturulmalıdır.
 # Debian'nın sondan bir önceki olan kararlı sürümü buster'dır(Buster, sürümün adıdır yani v10).
