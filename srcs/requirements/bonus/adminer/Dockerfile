@@ -19,9 +19,9 @@ EXPOSE 9000
 
 ENV PATH="/usr/sbin/php-fpm7.3:$PATH"
 
-RUN if [ -f /conf/www.conf ]; then \
-        COPY /conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf \
-        echo "Copy process..." ; \
+# RUN if [ -f /conf/www.conf ]; then \
+#         COPY /conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf \
+#         echo "Copy process..." ; \
     # else \
     #     sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
     #     sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
@@ -29,7 +29,7 @@ RUN if [ -f /conf/www.conf ]; then \
     #     sed -i 's/^listen =$/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
     #     sed -i 's/^listen.group = deploy$/listen.group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
     #     sed -i 's/^;listen.mode = 0660$/listen.mode = 0660/' /etc/php/7.3/fpm/pool.d/www.conf ; \
-    fi
+    # fi
 
 # RUN sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf
 # RUN sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf
@@ -38,6 +38,7 @@ RUN if [ -f /conf/www.conf ]; then \
 # RUN sed -i 's/^listen.group = deploy$/listen.group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf
 # RUN sed -i 's/^;listen.mode = 0660$/listen.mode = 0660/' /etc/php/7.3/fpm/pool.d/www.conf
 
+# https://www.appsloveworld.com/docker/100/29/php-fpm-wont-start-from-a-dockerfile
 RUN service php7.3-fpm start
 # RUN service php7.3-fpm enable
 # RUN service php7.3-fpm status
@@ -48,11 +49,11 @@ CMD ["php-fpm7.3", "-F"]
 # CMD ["/usr/sbin/php-fpm7.3", "-F"]
 
 # https://packages.debian.org/buster/php
-# docker pull debian
+# $> docker pull debian:buster
 # $> docker run -it debian:buster
 # $> apt-get update && apt-get -y install php php-fpm
-# find /usr/sbin/php-fpm7.3
-# find /etc/php/7.3/fpm/pool.d/www.conf
+# $> find /usr/sbin/php-fpm7.3
+# $> find /etc/php/7.3/fpm/pool.d/www.conf
 
 # if you want to check adminer www.conf file
 # while running adminer image:

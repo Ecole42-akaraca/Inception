@@ -15,7 +15,7 @@ install: ## Install required programs / Gerekli programları kurunuz.
 	sudo apt-get upgrade
 	sudo apt-get install docker-compose
 
-clean: ## Clean up temporary files, logs, etc. / Geçici dosyaları, günlükleri vb. temizleyin.
+clean: down ## Clean up temporary files, logs, etc. / Geçici dosyaları, günlükleri vb. temizleyin.
 #	'docker-compose down --rmi all --volumes' komutu, yalnızca projenin altındaki Docker Compose dosyasında tanımlı olan container, volume ve network'leri kaldırır ve container'ların kullandığı image'leri de siler.
 # 		Bu, projeye özgü temizleme işlemidir ve sadece bu projeye ait olan bileşenleri etkiler.
 	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) down --rmi all --volumes
@@ -33,7 +33,7 @@ setup-data: ## Create necessary directories / Gerekli dizinleri oluşturun.
 	@mkdir -p $(HOME)/data/wordpress
 	@mkdir -p $(HOME)/data/mariadb
 
-re: clean setup-data ## Recreate and start the containers (with rebuild) / Container'ları yeniden oluşturun ve başlatın.
+re: down clean setup-data ## Recreate and start the containers (with rebuild) / Container'ları yeniden oluşturun ve başlatın.
 	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) up --build -d
 
 # Docker Compose komutları için hedefleri tanımlayınız.
@@ -72,6 +72,9 @@ logs-nginx:
 
 inspect-nginx:
 	docker inspect nginx
+
+fclean: clean
+	docker system prune -af
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:
