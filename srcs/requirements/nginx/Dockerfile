@@ -40,6 +40,10 @@ RUN chmod +x /var/www/nginx.sh
 # Bu dizin, Nginx web sunucusu tarafından geçici dosyalar için kullanılır.
 RUN mkdir -p /run/nginx
 
+# RUN service ngnix start
+# RUN service ngnix status
+# Bu dizinin oluşması için: '/run/nginx.pid'
+
 # 'ENTRYPOINT [ "var/www/nginx.sh" ]': Docker container'ı başlatıldığında otomatik olarak çalışacak ana komutu belirtir.
 #	Burada '/var/www/nginx.sh' dosyası başlatma komutu olarak tanımlanır.
 ENTRYPOINT [ "var/www/nginx.sh" ]
@@ -50,3 +54,17 @@ ENTRYPOINT [ "var/www/nginx.sh" ]
 #	Bu durumda, Nginx web sunucusunu başlatır ve "daemon off;" seçeneğiyle arka planda çalışmasını sağlar.
 CMD [ "nginx", "-g", "daemon off;" ]
 ## CMD [ "executable" ]
+
+# https://packages.debian.org/buster/nginx
+# $> docker pull debian:buster
+# $> docker run -it debian:buster
+# $> apt-get update && apt-get install -y nginx openssl
+# $> find /etc/nginx/sites-enabled/default
+# $> find /etc/nginx/conf.d/www.conf
+
+# if you want to check nginx config file
+# while running nginx image:
+#   $> docker exec -it ngnix bash
+#   $> cat /etc/nginx/sites-enabled/default
+#   $> cat /etc/nginx/conf.d/www.conf
+# https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Docker-Nginx-reverse-proxy-setup-example
