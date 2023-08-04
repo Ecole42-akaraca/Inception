@@ -40,8 +40,8 @@ RUN chmod +x /var/www/nginx.sh
 # Bu dizin, Nginx web sunucusu tarafından geçici dosyalar için kullanılır.
 RUN mkdir -p /run/nginx
 
-# RUN service ngnix start
-# RUN service ngnix status
+# RUN service nginx start
+# RUN service nginx status
 # Bu dizinin oluşması için: '/run/nginx.pid'
 
 # 'ENTRYPOINT [ "var/www/nginx.sh" ]': Docker container'ı başlatıldığında otomatik olarak çalışacak ana komutu belirtir.

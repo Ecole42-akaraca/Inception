@@ -37,7 +37,7 @@ re: down clean setup-data ## Recreate and start the containers (with rebuild) / 
 	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) up --build -d
 
 # Docker Compose komutları için hedefleri tanımlayınız.
-up: setup-data ## Start the containers / Container'ları başlatın.
+up: install setup-data ## Start the containers / Container'ları başlatın.
 	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) up -d
 
 down: ## Stop and remove the containers / Container'ları durdurun ve temizleyin.
@@ -75,6 +75,9 @@ inspect-nginx:
 
 fclean: clean
 	docker system prune -af
+
+config:
+	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) config
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:

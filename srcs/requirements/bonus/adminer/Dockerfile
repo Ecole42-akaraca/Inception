@@ -27,6 +27,7 @@ ENV PATH="/usr/sbin/php-fpm7.3:$PATH"
     #     sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
     #     sed -i 's/^listen =$/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
     #     sed -i 's/^listen =$/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
+    #     sed -i 's/^listen.owner = deploy$/listen.owner = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
     #     sed -i 's/^listen.group = deploy$/listen.group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
     #     sed -i 's/^;listen.mode = 0660$/listen.mode = 0660/' /etc/php/7.3/fpm/pool.d/www.conf ; \
     # fi

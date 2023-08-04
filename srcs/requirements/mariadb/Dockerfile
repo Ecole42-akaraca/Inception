@@ -13,6 +13,7 @@ COPY ./tools/create_wp_db.sql /var/www/
 # https://stackoverflow.com/questions/32133353/unable-to-connect-to-mysql-database-in-ubuntu
 # root kullanıcısında çalıştırılmadığı zaman hata almamak için dosyanın iznini mysql kullanıcısına veriyoruz.
 # iki yapıdan birinin açık olması yeterli
+# ??? açık olursa "502 bad gateway" hatası veriyor, kapalı oluncada "Error establishing a database connection" hatası veriyor.
 #RUN chown mysql:mysql /etc/mysql/mariadb.conf.d/50-server.cnf
 # RUN chmod 600 /etc/mysql/mariadb.conf.d/50-server.cnf
 

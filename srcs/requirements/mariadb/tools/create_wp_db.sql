@@ -5,6 +5,7 @@
 -- Kullanıcıya verilecek ayrıcalıklar: wordpress veritabanına tüm ayrıcalıklar
 -- Ayrıcalıkları yenile komutu: Bu komut, değişikliklerin veritabanına uygulanmasını sağlar.
 -- root kullanıcısının şifresini değiştir komutu: Bu komut, root kullanıcısının şifresini passroot123 olarak değiştirir.
+sudo mysql -u root -p
 CREATE DATABASE IF NOT EXISTS wordpress;
 USE wordpress;
 CREATE USER IF NOT EXISTS 'akaraca'@'%' IDENTIFIED BY 'pass123';
