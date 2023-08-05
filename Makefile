@@ -14,6 +14,9 @@ install: ## Install required programs / Gerekli programları kurunuz.
 	sudo apt-get update
 	sudo apt-get upgrade
 	sudo apt-get install docker-compose
+	if ! sudo grep -q "127.0.0.1	akaraca.42.fr" /etc/hosts; then \
+		echo "127.0.0.1	akaraca.42.fr" | sudo tee -a /etc/hosts; \
+	fi
 
 clean: down ## Clean up temporary files, logs, etc. / Geçici dosyaları, günlükleri vb. temizleyin.
 #	'docker-compose down --rmi all --volumes' komutu, yalnızca projenin altındaki Docker Compose dosyasında tanımlı olan container, volume ve network'leri kaldırır ve container'ların kullandığı image'leri de siler.
@@ -78,6 +81,35 @@ fclean: clean
 
 config:
 	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) config
+
+setup-ssh:
+	sudo usermod -aG sudo $(USER)
+	if ! sudo grep -q "$(USER) ALL=(ALL:ALL) ALL" /etc/sudores; the \
+		echo "$(USER) ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers; \
+	fi
+	sudo apt install openssh-server -y
+	sudo apt install ufw -y
+	sudo apt-get install wget -y
+    sudo service ssh restart
+	if ! sudo grep -q "Port 4242" /etc/ssh/sshd_config; the \
+		echo "Port 4242" | sudo tee -a /etc/ssh/sshd_config; \
+	fi
+	if ! sudo grep -q "PermitRootLogin yes" /etc/ssh/sshd_config; the \
+		echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config; \
+	fi
+	if ! sudo grep -q "PasswordAuthentication yes" /etc/ssh/sshd_config; the \
+		echo "PasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config; \
+	fi
+	sudo systemctl restart sshd
+    sudo service ssh restart
+	sudo ufw enable
+	sudo ufw allow ssh
+	sudo ufw allow 4242
+	@echo "...then add port(4242) for Virtual Machine"
+	@echo "Now you can connect to your VM in this way from your own terminal: 'ssh user_name@localhost -p 4242' or ssh root@localhost -p 4242"
+
+fix-package:
+	apt-get update && apt-get install -y --fix-missing
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:
