@@ -84,29 +84,32 @@ config:
 
 setup-ssh:
 	sudo usermod -aG sudo $(USER)
-	if ! sudo grep -q "$(USER) ALL=(ALL:ALL) ALL" /etc/sudores; the \
+	if ! sudo grep -q "$(USER) ALL=(ALL:ALL) ALL" /etc/sudores; then \
 		echo "$(USER) ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers; \
 	fi
 	sudo apt install openssh-server -y
 	sudo apt install ufw -y
 	sudo apt-get install wget -y
-    sudo service ssh restart
-	if ! sudo grep -q "Port 4242" /etc/ssh/sshd_config; the \
+	sudo service ssh restart
+	if ! sudo grep -q "Port 4242" /etc/ssh/sshd_config; then \
 		echo "Port 4242" | sudo tee -a /etc/ssh/sshd_config; \
 	fi
-	if ! sudo grep -q "PermitRootLogin yes" /etc/ssh/sshd_config; the \
+	if ! sudo grep -q "PermitRootLogin yes" /etc/ssh/sshd_config; then \
 		echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config; \
 	fi
-	if ! sudo grep -q "PasswordAuthentication yes" /etc/ssh/sshd_config; the \
+	if ! sudo grep -q "PasswordAuthentication yes" /etc/ssh/sshd_config; then \
 		echo "PasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config; \
 	fi
 	sudo systemctl restart sshd
-    sudo service ssh restart
+	sudo service ssh restart
 	sudo ufw enable
 	sudo ufw allow ssh
 	sudo ufw allow 4242
+	sudo ufw allow in on docker0
+	sudo ufw allow out on docker0
 	@echo "...then add port(4242) for Virtual Machine"
 	@echo "Now you can connect to your VM in this way from your own terminal: 'ssh user_name@localhost -p 4242' or ssh root@localhost -p 4242"
+	@echo "if you can't connect check the 'known_hosts' file"
 
 fix-package:
 	apt-get update && apt-get install -y --fix-missing
