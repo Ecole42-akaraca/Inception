@@ -117,15 +117,19 @@ fix-package:
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:
 	@echo "VM OS: 'debian-10.13.0-amd64-netinst'"
-	@echo "Firstly setup packets: \n\
+	@echo "Firstly setup packets in root: \n\
 			'#> apt-get install sudo' \n\
 			'#> apt-get install git' \n\
 			'#> apt-get install make' \n\
-			'#> sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 443 \n\
+			'???#> sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 443 \n\
 			'set MV networks; host machine ip: 127.0.1.1,  host b. point: 443, guest b.point: 443"
 	@echo "Usage: make [target]"
 	@echo "For the first use, use the 'install', 'setup-ssh' and 'up' commands."
 	@echo "Targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "	\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
+# google chrome setup:
+# wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# sudo apt install ./google-chrome-stable_current_amd64.deb
+# google-chrome
 .PHONY: install up down ps logs exec-nginx exec-wordpress exec-mariadb help clean setup-data re
