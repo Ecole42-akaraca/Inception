@@ -105,17 +105,23 @@ setup-ssh:
 	sudo ufw enable
 	sudo ufw allow ssh
 	sudo ufw allow 4242
-	sudo ufw allow in on docker0
-	sudo ufw allow out on docker0
+	# sudo ufw allow in on docker0
+	# sudo ufw allow out on docker0
 	@echo "...then add port(4242) for Virtual Machine"
 	@echo "Now you can connect to your VM in this way from your own terminal: 'ssh user_name@localhost -p 4242' or ssh root@localhost -p 4242"
-	@echo "if you can't connect check the 'known_hosts' file"
+	@echo "if you can't connect, check the 'known_hosts' file example: 'rm -rf /home/akaraca/.ssh/known_hosts'"
 
 fix-package:
 	apt-get update && apt-get install -y --fix-missing
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:
+	@echo "Firstly setup packets:
+			'#> apt-get install sudo'
+			'#> apt-get install git'
+			'#> apt-get install make'
+			'#> sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 443
+			'set MV networks; host machine ip: 127.0.1.1,  host b. point: 443, guest b.point: 443"
 	@echo "Usage: make [target]"
 	@echo "For the first use, use the 'install' and 'up' commands."
 	@echo "Targets:"
