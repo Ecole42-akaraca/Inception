@@ -116,6 +116,7 @@ fix-package:
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:
+	@echo "VM OS: 'debian-10.13.0-amd64-netinst'"
 	@echo "Firstly setup packets: \n\
 			'#> apt-get install sudo' \n\
 			'#> apt-get install git' \n\
@@ -123,7 +124,7 @@ help:
 			'#> sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 443 \n\
 			'set MV networks; host machine ip: 127.0.1.1,  host b. point: 443, guest b.point: 443"
 	@echo "Usage: make [target]"
-	@echo "For the first use, use the 'install' and 'up' commands."
+	@echo "For the first use, use the 'install', 'setup-ssh' and 'up' commands."
 	@echo "Targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "	\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
