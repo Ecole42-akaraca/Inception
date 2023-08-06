@@ -116,11 +116,11 @@ fix-package:
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:
-	@echo "Firstly setup packets:
-			'#> apt-get install sudo'
-			'#> apt-get install git'
-			'#> apt-get install make'
-			'#> sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 443
+	@echo "Firstly setup packets: \n\
+			'#> apt-get install sudo' \n\
+			'#> apt-get install git' \n\
+			'#> apt-get install make' \n\
+			'#> sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 443 \n\
 			'set MV networks; host machine ip: 127.0.1.1,  host b. point: 443, guest b.point: 443"
 	@echo "Usage: make [target]"
 	@echo "For the first use, use the 'install' and 'up' commands."
