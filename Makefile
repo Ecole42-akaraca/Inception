@@ -26,6 +26,7 @@ clean: down ## Clean up temporary files, logs, etc. / Geçici dosyaları, günl�
 #		Bu komut, kullanılmayan tüm image'leri sistem genelinde tespit eder ve siler.
 #		Yani sadece projenize ait image'leri değil, sistemdeki diğer kullanılmayan image'leri de siler.
 	docker image prune -f
+	docker network prune -f
 	rm -rf $(HOME)/data/wordpress
 	rm -rf $(HOME)/data/mariadb
 
@@ -33,6 +34,7 @@ clean: down ## Clean up temporary files, logs, etc. / Geçici dosyaları, günl�
 setup-data: ## Create necessary directories / Gerekli dizinleri oluşturun.
 #	Docker Compose dosyanızda mariadb ve wordpress için driver: local olarak ayrılmış bir volume kullanıyorsanız ve bu volume'lerin host makinenizde belirli klasörlere monte edilmesini istiyorsanız klasörleri ayrı olarak oluşturmalınız.
 #		Oluşturulacak klasörler docker-compose.yml içinde 'volumes' parametresinin alt parametresi olan 'device' parametresine uygun olmalıdır.
+
 	@mkdir -p $(HOME)/data/wordpress
 	@mkdir -p $(HOME)/data/mariadb
 

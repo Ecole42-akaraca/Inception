@@ -51,7 +51,7 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 # 	&& chmod +x /usr/local/bin/wp \
 # 	&& rm -rf /var/lib/apt/lists/*
 
-# COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
 
 RUN mkdir /run/php
 
@@ -71,18 +71,18 @@ ENV PATH="/usr/sbin/php-fpm7.3:$PATH"
 
 RUN service php7.3-fpm start
 
-RUN if [ -f /etc/php/7.3/fpm/pool.d/www.conf ]; then \
-	    sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-      sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-      sed -i 's/^listen =$/listen = wordpress:9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
-      sed -i 's/^listen.owner = deploy$/listen.owner = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-      sed -i 's/^listen.group = deploy$/listen.group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-      sed -i 's/^;listen.mode = 0660$/listen.mode = 0660/' /etc/php/7.3/fpm/pool.d/www.conf && \
-      sed -i '/^\[www\]/ s/$/\nlisten = wordpress:9000/' /etc/php/7.3/fpm/pool.d/www.conf ; \
-    else \
-		  COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf && \
-      echo "Copy process..." ; \
-    fi
+# RUN if [ -f /etc/php/7.3/fpm/pool.d/www.conf ]; then \
+# 		sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^listen =$/listen = wordpress:9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^listen.owner = deploy$/listen.owner = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^listen.group = deploy$/listen.group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^;listen.mode = 0660$/listen.mode = 0660/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i '/^\[www\]/ s/$/\nlisten = wordpress:9000/' /etc/php/7.3/fpm/pool.d/www.conf ; \
+# 	else \
+# 		COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		echo "Copy process..." ; \
+# 	fi
 
 # php-fpm serverını başlat
 CMD [ "php-fpm7.3", "-F" ]
