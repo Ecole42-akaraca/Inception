@@ -135,4 +135,9 @@ help:
 # wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 # sudo apt install ./google-chrome-stable_current_amd64.deb
 # google-chrome
+
+# how to pull VM files:
+# firstly zip your files: $> tar -czvf inception.gz inception
+# login sftp: akaraca@localhost
+# get file: get inception.gz /Users/akaraca/Desktop
 .PHONY: install up down ps logs exec-nginx exec-wordpress exec-mariadb help clean setup-data re
