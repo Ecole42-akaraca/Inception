@@ -116,7 +116,8 @@ fix-package:
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
 help:
-	@echo "VM OS: 'debian-10.13.0-amd64-netinst'"
+	@echo "https://www.debian.org/releases/buster/debian-installer/"
+	@echo "OS for VM: 'debian-10.13.0-amd64-netinst'"
 	@echo "Firstly setup packets in root: \n\
 			'#> apt-get install sudo' \n\
 			'#> apt-get install git' \n\
