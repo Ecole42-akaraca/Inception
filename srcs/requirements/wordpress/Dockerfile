@@ -21,24 +21,24 @@ FROM debian:buster
 #	php-mbstring: PHP'nin çok dilli metinleri işlemesini sağlayan bir uzantıdır.
 #	php-xml: PHP'nin XML belgelerini işlemesini sağlayan bir uzantıdır.
 #	php-zip: PHP'nin ZIP dosyalarını işlemesini sağlayan bir uzantıdır.
-RUN apt-get update && apt-get -y install \
- wget \
- curl \
- bash \
- php \
- php-cgi \
- php-mysql \
- php-fpm \
- php-pdo \
- php-gd php-cli \
- php-mbstring \
- redis \
- php-redis \
- sendmail \
- && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+	wget \
+	curl \
+	vim \
+	bash \
+	php7.3 \
+	php-cgi \
+	php-mysql \
+	php-fpm \
+	php-pdo \
+	php-gd php-cli \
+	php-mbstring \
+	redis \
+	php-redis \
+	sendmail \
+	&& rm -rf /var/lib/apt/lists/*
 
 # RUN apt-get update && apt-get -y install wget php php-fpm php-mysql sendmail
-
 
 # COPY ./conf/wp-config.php /var/www/html/wp-config.php
 
@@ -54,8 +54,6 @@ RUN mkdir -p /run/php
 COPY ./tools/create_wp.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/create_wp.sh
 
-ENTRYPOINT ["/usr/local/bin/create_wp.sh"]
-
 # nginx'in standart dizinini gösterince artık nginx default olarak değil wordpress ile çalışacaktır.
 WORKDIR /var/www/html/
 
@@ -65,6 +63,9 @@ EXPOSE 9000
 ENV PATH="/usr/sbin/php-fpm7.3:$PATH"
 
 RUN service php7.3-fpm start
+
+ENTRYPOINT ["/usr/local/bin/create_wp.sh"]
+
 
 # RUN if [ -f /etc/php/7.3/fpm/pool.d/www.conf ]; then \
 # 		sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \

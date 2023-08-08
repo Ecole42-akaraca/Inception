@@ -23,6 +23,7 @@ else
 	sed -i "s/database_name_here/$MYSQL_DATABASE/g" wp-config-sample.php
 	cp wp-config-sample.php wp-config.php
 
+	# bu yapı olmaz ise wordpressin kurulum sihirbazı gelecektir.
 	# WordPress'in çekirdek kurulumunu ve kullanıcıları oluşturmayı gerçekleştiriyor.
 	echo "wordpress creating users..."
 	wp core install --allow-root --url=${WP_URL} --title=${WP_TITLE} --admin_user=${WP_ADMIN_LOGIN} --admin_password=${WP_ADMIN_PASSWORD} --admin_email=${WP_ADMIN_EMAIL};
