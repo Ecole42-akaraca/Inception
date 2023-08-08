@@ -68,7 +68,7 @@ services:
     build:
       context: ./requirements/bonus/adminer
       dockerfile: Dockerfile
-    ports:
+    expose:
       - "9000"
     depends_on:
       - mariadb

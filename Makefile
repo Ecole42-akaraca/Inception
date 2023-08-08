@@ -138,4 +138,7 @@ help:
 # firstly zip your files: $> tar -czvf inception.gz inception
 # login sftp: $> sftp akaraca@localhost
 # get file: $> get inception.gz /Users/akaraca/Desktop
+
+# how to login in ECOLE: https://k2m15s08.42kocaeli.com.tr/
+# how to get private ip address : ipconfig getifaddr en0
 .PHONY: install up down ps logs exec-nginx exec-wordpress exec-mariadb help clean setup-data re
