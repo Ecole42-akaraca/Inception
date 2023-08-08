@@ -19,18 +19,18 @@ EXPOSE 9000
 
 ENV PATH="/usr/sbin/php-fpm7.3:$PATH"
 
-RUN if [ -f /conf/www.conf ]; then \
-		COPY /conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf \
-		echo "Copy process..." ; \
-	else \
-		sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-		sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-		sed -i 's/^listen =$/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
-		sed -i 's/^listen =$/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
-		sed -i 's/^listen.owner = deploy$/listen.owner = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-		sed -i 's/^listen.group = deploy$/listen.group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-		sed -i 's/^;listen.mode = 0660$/listen.mode = 0660/' /etc/php/7.3/fpm/pool.d/www.conf ; \
-	fi
+# RUN if [ -f /conf/www.conf ]; then \
+# 		COPY /conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf \
+# 		echo "Copy process..." ; \
+# 	else \
+# 		sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^listen =$/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^listen =$/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^listen.owner = deploy$/listen.owner = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^listen.group = deploy$/listen.group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+# 		sed -i 's/^;listen.mode = 0660$/listen.mode = 0660/' /etc/php/7.3/fpm/pool.d/www.conf ; \
+# 	fi
 
 # RUN sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf
 # RUN sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf
@@ -44,6 +44,9 @@ RUN service php7.3-fpm start
 # RUN service php7.3-fpm enable
 # RUN service php7.3-fpm status
 # Bu dizinin oluşması için: '/run/php/php7.3-fpm.sock'
+
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+RUN chmod 600 /etc/php/7.3/fpm/pool.d/www.conf
 
 CMD ["php-fpm7.3", "-F"]
 

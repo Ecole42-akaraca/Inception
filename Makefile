@@ -107,8 +107,6 @@ setup-ssh:
 	sudo ufw enable
 	sudo ufw allow ssh
 	sudo ufw allow 4242
-	# sudo ufw allow in on docker0
-	# sudo ufw allow out on docker0
 	@echo "...then add port(4242) for Virtual Machine"
 	@echo "Now you can connect to your VM in this way from your own terminal: 'ssh user_name@localhost -p 4242' or ssh root@localhost -p 4242"
 	@echo "if you can't connect, check the 'known_hosts' file example: 'rm -rf /home/akaraca/.ssh/known_hosts'"
@@ -138,6 +136,6 @@ help:
 
 # how to pull VM files:
 # firstly zip your files: $> tar -czvf inception.gz inception
-# login sftp: akaraca@localhost
-# get file: get inception.gz /Users/akaraca/Desktop
+# login sftp: $> sftp akaraca@localhost
+# get file: $> get inception.gz /Users/akaraca/Desktop
 .PHONY: install up down ps logs exec-nginx exec-wordpress exec-mariadb help clean setup-data re

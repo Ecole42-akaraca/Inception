@@ -43,23 +43,18 @@ RUN apt-get update && apt-get -y install \
 # COPY ./conf/wp-config.php /var/www/html/wp-config.php
 
 #WordPress CLI'ı wp komutuyla çalıştırabilirsiniz. Bu yapı için curl kurulu olması gerekmektedir.
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-	&& chmod +x wp-cli.phar \
-	&& mv wp-cli.phar /usr/local/bin/wp
-
-# RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp \
-# 	&& chmod +x /usr/local/bin/wp \
-# 	&& rm -rf /var/lib/apt/lists/*
+RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp \
+	&& chmod +x /usr/local/bin/wp \
+	&& rm -rf /var/lib/apt/lists/*
 
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
 
-RUN mkdir /run/php
+RUN mkdir -p /run/php
 
-COPY ./tools/create-wp.sh /usr/local/bin/
+COPY ./tools/create_wp.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/create_wp.sh
 
-RUN chmod +x /usr/local/bin/create-wp.sh
-
-ENTRYPOINT ["/usr/local/bin/create-wp.sh"]
+ENTRYPOINT ["/usr/local/bin/create_wp.sh"]
 
 # nginx'in standart dizinini gösterince artık nginx default olarak değil wordpress ile çalışacaktır.
 WORKDIR /var/www/html/
