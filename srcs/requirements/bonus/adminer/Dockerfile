@@ -6,7 +6,8 @@ FROM debian:buster
 # Adminer'in sürümünü belirleyebilirsiniz, örneğin: 4.8.1
 ARG ADMINER_VERSION=4.8.1
 
-RUN apt-get update && apt-get -y install wget php php-fpm
+# https://askubuntu.com/questions/599921/adminer-none-of-the-supported-php-extensions-mysqli-mysql-pdo-mysql-are-ava
+RUN apt-get update && apt-get -y install wget php php-fpm php-mysql
 
 # Adminer'i indirip /var/www/html klasörüne kopyalıyoruz
 RUN mkdir -p /var/www/html
