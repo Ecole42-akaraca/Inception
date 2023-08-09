@@ -2,7 +2,8 @@
 # https://www.serverkaka.com/2018/12/install-and-configure-latest-wordpress-ubuntu.html
 
 # Check if wp-config.php exist.
-if [-f ./wp-config.php]
+# if yapısını boşluklarla ayır yoksa komut olarak algılamayabilir.
+if [ -f ./wp-config.php ]
 then
 	echo "wordpress already downloaded!"
 else

@@ -7,6 +7,8 @@
 # wp-admin.php //ekli değil
 # localhost
 # wp-admin
+# Servisler başlatıldığında 502 bad gateway hata alınmaya devam ediyorsa bunun sebebi wordpressin kullanıcıları oluşturmasından dolayıdır.
+# Servisler başlatıldıktan sonra bir süre beklenmesi gerekiyor.
 
 # Subjectte Dockerfile için Alpine veya Debian kullanılması önerilmektedir, bu yüzden kararlı olan bir önceki sürüm tercih edilmiştir.
 FROM debian:buster
@@ -47,7 +49,9 @@ RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.ph
 	&& chmod +x /usr/local/bin/wp \
 	&& rm -rf /var/lib/apt/lists/*
 
-COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+# COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www_backup.conf
+
 
 RUN mkdir -p /run/php
 
@@ -66,19 +70,21 @@ RUN service php7.3-fpm start
 
 ENTRYPOINT ["/usr/local/bin/create_wp.sh"]
 
+# Kendimiz tarafından oluşturulan www.conf dosyasını test etmek için,
+# RUN rm -rf /etc/php/7.3/fpm/pool.d/www.conf
 
-# RUN if [ -f /etc/php/7.3/fpm/pool.d/www.conf ]; then \
-# 		sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-# 		sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-# 		sed -i 's/^listen =$/listen = wordpress:9000/' /etc/php/7.3/fpm/pool.d/www.conf && \
-# 		sed -i 's/^listen.owner = deploy$/listen.owner = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-# 		sed -i 's/^listen.group = deploy$/listen.group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
-# 		sed -i 's/^;listen.mode = 0660$/listen.mode = 0660/' /etc/php/7.3/fpm/pool.d/www.conf && \
-# 		sed -i '/^\[www\]/ s/$/\nlisten = wordpress:9000/' /etc/php/7.3/fpm/pool.d/www.conf ; \
-# 	else \
-# 		COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf && \
-# 		echo "Copy process..." ; \
-# 	fi
+RUN if [ -f /etc/php/7.3/fpm/pool.d/www.conf ]; then \
+		sed -i 's/^user = deploy$/user = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+		sed -i 's/^group = deploy$/group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+		sed -i 's|^listen = /run/php/php7.3-fpm.sock$|listen = 9000|' /etc/php/7.3/fpm/pool.d/www.conf && \
+		sed -i 's/^listen.owner = deploy$/listen.owner = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+		sed -i 's/^listen.group = deploy$/listen.group = www-data/' /etc/php/7.3/fpm/pool.d/www.conf && \
+		sed -i 's/^;listen.mode = 0660$/listen.mode = 0660/' /etc/php/7.3/fpm/pool.d/www.conf && \
+		echo "Configuration updated." ; \
+	else \
+		cp /etc/php/7.3/fpm/pool.d/www_backup.conf /etc/php/7.3/fpm/pool.d/www.conf && \
+		echo "Configuration copied." ; \
+	fi
 
 # php-fpm serverını başlat
 CMD [ "php-fpm7.3", "-F" ]

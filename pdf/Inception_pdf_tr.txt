@@ -67,7 +67,7 @@
 		Bu alan adı login.42.fr olmalıdır. Yine, kendi oturum açma bilgilerinizi kullanmalısınız(örnek: akaraca.42.fr).
 			Örneğin, oturum açma bilgileriniz wil ise wil.42.fr, wil'in web sitesine işaret eden IP adresine yönlendirecektir.
 		
-		!!! En son etiket yasaktır.
+		!!! En son etiket yasaktır. (debian:latest)
 			Docker dosyalarınızda parola bulunmamalıdır.
 			Ortam değişkenlerini kullanmak zorunludur.
 			Ayrıca, ortam değişkenlerini depolamak için bir .env dosyası kullanılması kesinlikle önerilir.
