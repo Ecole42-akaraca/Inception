@@ -107,6 +107,11 @@ setup-ssh:
 	sudo ufw enable
 	sudo ufw allow ssh
 	sudo ufw allow 4242
+	sudo ufw allow 3306
+	sudo ufw allow 80
+	sudo ufw allow 443
+	sudo ufw allow OpenSSH
+	sudo ufw enable
 	@echo "...then add port(4242) for Virtual Machine"
 	@echo "Now you can connect to your VM in this way from your own terminal: 'ssh user_name@localhost -p 4242' or ssh root@localhost -p 4242"
 	@echo "if you can't connect, check the 'known_hosts' file example: 'rm -rf /home/akaraca/.ssh/known_hosts'"

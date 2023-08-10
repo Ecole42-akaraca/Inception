@@ -9,5 +9,5 @@ CREATE DATABASE IF NOT EXISTS wordpress;
 USE wordpress;
 CREATE USER IF NOT EXISTS 'akaraca'@'%' IDENTIFIED BY 'pass123';
 GRANT ALL PRIVILEGES ON wordpress.* TO 'akaraca'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'passroot123' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'passroot123';

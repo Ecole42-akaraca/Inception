@@ -35,9 +35,6 @@ RUN apt-get update && apt-get install -y \
 	php-pdo \
 	php-gd php-cli \
 	php-mbstring \
-	redis \
-	php-redis \
-	sendmail \
 	&& rm -rf /var/lib/apt/lists/*
 
 # RUN apt-get update && apt-get -y install wget php php-fpm php-mysql sendmail
