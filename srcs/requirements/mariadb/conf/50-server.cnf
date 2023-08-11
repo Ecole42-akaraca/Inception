@@ -1,3 +1,43 @@
+################################################################### INFO ####################################################################
+
+### 50-server.cnf nedir ###
+# MariaDB sunucusunun yapılandırma dosyasıdır. Bu dosya, MariaDB sunucusunun nasıl çalışacağına dair çeşitli ayarları içerir.
+#	MariaDB sunucusunu başlatırken bu ayarlar kullanılır ve sunucunun davranışını belirler.
+# Dosya adındaki "50" sayısı, dosyanın belirli bir sıra ile yüklendiğini belirtir.
+#	MariaDB sunucusu, yapılandırma dosyalarını alfabetik olarak sıralar ve sıralamaya göre yükler.
+#	Bu sayede farklı ayar dosyalarını belirli bir sıraya göre yüklemek ve önceliklerini belirlemek mümkün olur.
+
+### MariaDB sunucusunun temel yapılandırma ayarlarını içerir ###
+# 📌Port numarası: Sunucunun hangi port üzerinden dinlemesi gerektiğini belirler.
+#		port                  = 3306
+# 📌Karakter seti ve sıralama: Sunucunun hangi karakter seti ve sıralamayı kullanması gerektiğini belirler.
+#		character-set-server  = utf8mb4
+#		collation-server      = utf8mb4_general_ci
+# 📌Tampon boyutları: Sunucunun veri tamponlarının boyutlarını belirler.
+#	MariaDB sunucusunun veri tampon boyutları, sunucunun bellekte veriyi geçici olarak saklamak için kullandığı alanları belirtir.
+#		key_buffer_size=256M
+#		innodb_buffer_pool_size=2G
+#		sort_buffer_size=8M
+#		join_buffer_size=8M
+# 📌Kullanıcı erişim kontrolü: Hangi kullanıcıların sunucuya erişebileceğini belirler.
+#	MariaDB sunucusunun hangi kullanıcı kimliği altında çalışacağını tanımlar.
+#	Varsayılan olarak, MariaDB sunucusu "mysql" kullanıcısı altında çalışır.
+#		Ancak güvenlik veya özel gereksinimler nedeniyle farklı bir kullanıcı altında çalıştırmak istediğinizde bu ayarı değiştirebilirsiniz.
+#		user                    = root
+# 📌Loglama ayarları: Hangi olayların loglanacağını ve logların nereye kaydedileceğini belirler.
+#		log_error = /var/log/mysql/error.log
+#		general_log = 1
+#		general_log_file = /var/log/mysql/general.log
+# 📌Dinleme Ayarı ve IP Yapılandırması: MariaDB veya MySQL sunucusunun hangi IP adreslerini dinlediğini belirten bir yapılandırma ayarıdır.
+#	Bu ayar, sunucunun hangi ağ arayüzleri üzerinden gelen bağlantıları kabul edeceğini belirler.
+#		Bu ayarın varsayılan değeri, genellikle "localhost" veya "127.0.0.1" şeklindedir.
+#		Bu, sunucunun sadece yerel makineden (localhost) gelen bağlantıları kabul ettiği anlamına gelir.
+#	"0.0.0.0" IP adresi, sunucunun tüm ağ arayüzlerinden gelen bağlantıları kabul edeceği anlamına gelir.
+#		Yani sunucu, herhangi bir IP adresi üzerinden gelen bağlantılara izin verir.
+#		Bu ayarı kullanarak sunucunun herhangi bir ağ arayüzüne bağlanmasını sağlayabilirsiniz.
+#		bind-address            = 0.0.0.0
+
+#############################################################################################################################################
 #
 # These groups are read by MariaDB server.
 # Use it for options that only the server (but not clients) should see

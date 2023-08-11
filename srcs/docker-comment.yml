@@ -4,10 +4,6 @@
 #   https://www.docker.com/101-tutorial/
 #   https://github.com/vbachele/Inception/blob/main/README.md
 
-# vim /etc/hosts
-# add 127.0.0.1 akaraca.42.fr
-
-
 # - docker-compose.yml dosyası nedir? ne işe yarar?
 # - docker-compose.yml doyası, Docker Compose'un yapılandırma dosyasıdır.
 #   Docker Compose, birden çok Docker Containerını tek bir ortamda çalıştırmak, yapılandırmak ve yönetmek için kullanılan bir araçtır.
@@ -148,6 +144,23 @@ services:
       - docker-network
     restart: unless-stopped
 
+  adminer:
+    container_name: adminer
+    build:
+      context: ./requirements/bonus/adminer
+      dockerfile: Dockerfile
+# - Expose parametresi, bir hizmetin belirli bir portunu dış dünyaya açmayı amaçlayan bir özelliktir.
+#   Bu bölümde belirtilen portlar, aynı Docker Compose projesi içindeki diğer hizmetler tarafından kullanılabilir, ancak dış ağ trafiğine otomatik olarak açılmazlar.
+#   Sadece diğer hizmetlerin bu portu kullanabilmesine olanak tanırken, dış ağ trafiği için ayrıca Docker ağırlıklı olarak host makinedeki portu da açmanız gerekmektedir.
+#   Yani expose yerine port parametresi kullanılmalıdır.
+    expose:
+      - "9000"
+    depends_on:
+      - mariadb
+    networks:
+      - docker-network
+    restart: unless-stopped
+
 # - Bu parametre, Docker Compose dosyasında belirtilen Docker volume'leri oluşturmak ve kullanmak için kullanılır.
 #   Docker Compose, bu volume'lerle veri kalıcığını sağlar, yani veriler container'lar silinse veya durdurulsa bile kalıcı kalır ve sonraki çalışmalarda erişilebilir olur.
 #   Docker Compose dosyasında iki farklı şekilde tanımlanır: isimli ve isimsiz volume
@@ -235,3 +248,18 @@ networks:
 #         Container'lar, host IP adresiyle çalışır ve host ağındaki diğer cihazlarla doğrudan iletişim kurabilir.
 #         Container'ları ayrı bir ağ izolasyonu olmadan çalıştırmak için kullanılabilir.
     driver: bridge
+
+# 'docker network ls' ile default olarak kullanılan ağları ve diğer ağları görüntüleyebiliriz.
+#   Burada bridge, host ve none olarak tanımlandırılmış default ağlar bulunmaktadır.
+#   'bridge': Bu, konteynerlar arasında ağ izolasyonunu sağlamak için kullanılan varsayılan ağdır.
+#     Konteynerlar bu ağa varsayılan olarak bağlanır ve aynı bridge ağında olan konteynerlar arasında iletişim sağlanabilir.
+#   'host': Bu ağ türünde, konteynerlar ana makinenin ağına doğrudan bağlanır.
+#     Konteynerların ayrı bir ağdaki gibi izole olması gerekmez, bu nedenle daha hızlı iletişim sağlanır.
+#   'none': Bu ağ türünde, konteynerlar herhangi bir ağa bağlı değildir.
+#     Bu nedenle dış dünya ile iletişimleri sınırlı olur.
+# Bu üç varsayılan ağın dışında kullanıcılar Docker ağları oluşturabilir ve özelleştirebilirler.
+#   Özel ağlar, farklı konteyner grupları arasında izolasyon sağlamak, güvenlik ve veri akışını kontrol etmek gibi amaçlar için kullanılır.
+# NETWORK ID          NAME                DRIVER              SCOPE
+# c68bbeca1eac        bridge              bridge              local
+# 995dd51460f0        host                host                local
+# 1af8b78f358c        none                null                local
