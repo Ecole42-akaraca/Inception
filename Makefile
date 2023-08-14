@@ -216,6 +216,9 @@ stop_:
 rm:
 	@docker rm -f $(docker ps -aq)
 
+images_:
+	@docker images
+
 ############################################ HELP #############################################
 
 # Mevcut hedefleri ve açıklamalarını görüntülemek için bir yardım hedefi tanımlayın.
@@ -292,4 +295,4 @@ tls: ## Check the TLS version.
 # $> ipconfig getifaddr en0
 
 ###############################################################################################
-.PHONY: setup setup-ssh re fclean clean install info ps create-data up down build ps images logs exec config start stop restart containers run pull exec_ logs_ inspect ls_n ls_v stop_ rm help fix-package
+.PHONY: setup setup-ssh re fclean clean install info ps create-data up down build ps images logs exec config start stop restart containers run pull exec_ logs_ inspect ls_n ls_v stop_ rm iamges_ help fix-package
