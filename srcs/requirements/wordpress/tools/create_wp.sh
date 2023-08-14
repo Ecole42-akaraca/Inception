@@ -25,7 +25,8 @@ else
 	sed -i "s/password_here/$MYSQL_PASSWORD/g" wp-config-sample.php
 	sed -i "s/localhost/$MYSQL_HOSTNAME/g" wp-config-sample.php
 	sed -i "s/database_name_here/$MYSQL_DATABASE/g" wp-config-sample.php
-	sed -i "/<?php/a define('WP_SITEURL', $DOMAIN_NAME);\ndefine('WP_HOME', $DOMAIN_NAME);" wp-config-sample.php
+	sed -i "/<?php/a define( 'WP_SITEURL', 'example.com' );\ndefine( 'WP_HOME', 'example.com' );" wp-config-sample.php
+	sed -i "s/example.com/$DOMAIN_NAME/g" wp-config-sample.php
 	cp wp-config-sample.php wp-config.php
 
 	# Bu yapı olmaz ise WordPress'in kurulum sihirbazı gelecektir.
