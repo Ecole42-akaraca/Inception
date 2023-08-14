@@ -241,11 +241,10 @@ fix-package:
 
 # TLS versiyonunun kontrolü için kullanılır.
 tls: ## Check the TLS version.
-	@docker exec -it nginx bash
 	@echo $(GREEN)"=========================== TLSv1.2 ====================================="$(END)
-	@openssl s_client -connect localhost:443 -tls1_2
+	@docker exec nginx openssl s_client -connect localhost:443 -tls1_2
 	@echo $(GREEN)"=========================== TLSv1.3 ====================================="$(END)
-	@openssl s_client -connect localhost:443 -tls1_3
+	@docker exec nginx openssl s_client -connect localhost:443 -tls1_3
 	@echo $(GREEN)"=========================================================================="$(END)
 
 ############################################ INFO #############################################

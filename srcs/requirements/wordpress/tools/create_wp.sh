@@ -25,6 +25,7 @@ else
 	sed -i "s/password_here/$MYSQL_PASSWORD/g" wp-config-sample.php
 	sed -i "s/localhost/$MYSQL_HOSTNAME/g" wp-config-sample.php
 	sed -i "s/database_name_here/$MYSQL_DATABASE/g" wp-config-sample.php
+	sed -i "/<?php/a define('WP_SITEURL', $DOMAIN_NAME);\ndefine('WP_HOME', $DOMAIN_NAME);" wp-config-sample.php
 	cp wp-config-sample.php wp-config.php
 
 	# Bu yapı olmaz ise WordPress'in kurulum sihirbazı gelecektir.
@@ -43,11 +44,15 @@ exec "$@"
 
 ### for wordpress helpful sites ###
 # https://www.serverkaka.com/2018/12/install-and-configure-latest-wordpress-ubuntu.html
+# https://developer.wordpress.org/advanced-administration/wordpress/wp-config/
 
 ### how to find wp-config-sample.php file ###
 # $> docker pull wordpress
 # $> docker run -it wordpress
 # find /var/www/html/wp-config-sample.php
 # find /var/www/html/wp-config.php
+
+# grep -r "example.com" .
+# grep -r "akaraca.42.fr" .
 
 #############################################################################################################################################
