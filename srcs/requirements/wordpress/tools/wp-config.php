@@ -25,6 +25,8 @@
 ?>
 
 <?php
+define( 'WP_SITEURL', 'https://akaraca.42.fr' );
+define( 'WP_HOME', 'https://akaraca.42.fr' );
 /**
  * The base configuration for WordPress
  *

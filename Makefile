@@ -72,7 +72,7 @@ re: clean create-data ## Recreate and start the containers (with rebuild).
 	docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) up --build -d
 
 # Docker ortamını tam kapsamlı bir şekilde temizler ve taze bir başlangıç için hazır hale getirir.
-fclean: ## It thoroughly cleans the Docker environment and gets it ready for a fresh start.
+fclean: clean ## It thoroughly cleans the Docker environment and gets it ready for a fresh start.
 	@if [ $$(docker ps -aq | wc -l) -gt 0 ]; then \
 		docker stop $$(docker ps -aq); \
 		docker rm -vf $$(docker ps -aq); \

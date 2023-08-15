@@ -25,7 +25,12 @@ else
 	sed -i "s/password_here/$MYSQL_PASSWORD/g" wp-config-sample.php
 	sed -i "s/localhost/$MYSQL_HOSTNAME/g" wp-config-sample.php
 	sed -i "s/database_name_here/$MYSQL_DATABASE/g" wp-config-sample.php
-	sed -i "/<?php/a define( 'WP_SITEURL', 'example.com' );\ndefine( 'WP_HOME', 'example.com' );" wp-config-sample.php
+
+	# 'WP_SITEURL' ve 'WP_HOME' WordPress'in Domain Name'ini temsil ediyor.
+	# Eğer siteniz HTTPS (güvenli bağlantı) üzerinden erişilebilecekse, o zaman URL'leri "https://" ile başlatmanız önemlidir.
+	#	Çünkü HTTPS kullanıyorsanız, bağlantının güvenli olması gerektiği anlamına gelir.
+	#	Dolayısıyla, "https://" ile başlamayan bir URL kullanmak, tarayıcıların güvenlik uyarılarına neden olabilir veya bağlantı sorunlarına yol açabilir.
+	sed -i "/<?php/a define( 'WP_SITEURL', 'https://example.com' );\ndefine( 'WP_HOME', 'https://example.com' );" wp-config-sample.php
 	sed -i "s/example.com/$DOMAIN_NAME/g" wp-config-sample.php
 	cp wp-config-sample.php wp-config.php
 
