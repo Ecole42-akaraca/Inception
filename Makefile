@@ -95,6 +95,7 @@ fclean: clean ## It thoroughly cleans the Docker environment and gets it ready 
 #Docker-compose.yml'ye ait tüm servisleri durdurup, (volumleri, imageleri, networkleri ve bağlantılı dosyaları) temizleyin.
 clean: ## Stop all services of docker-compose.yml and clean (volumes, images, networks and linked files).
 	@docker-compose -f $(COMPOSE_DIR)$(COMPOSE_FILE) down --rmi all --volumes
+	docker system prune
 	@rm -rf $(WP_DIR) $(DB_DIR)
 
 # > '127.0.0.1	akaraca.42.fr' yapısı, sanal makineden projeden istenildiği gibi bir url girişini sağlamak için hosts dosyasına eklenmelidir.

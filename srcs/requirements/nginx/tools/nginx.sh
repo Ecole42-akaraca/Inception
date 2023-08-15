@@ -22,6 +22,8 @@ echo "Nginx: ssl is set up!";
 # 'fi' ile 'if' bloğu sona erdirilir.
 fi
 
+sed -i "s/server_name \$DOMAIN_NAME/server_name $DOMAIN_NAME/g" /etc/nginx/conf.d/nginx.conf
+
 # 'exec "$@"': Docker container'ının ana komutu çalıştırılır.
 #	Bu, Docker container'ı başlatıldığında belirtilen komutları ve argümanları çalıştırmasını sağlar.
 #	Yani, bu yapı Docker container'ı başlatıldığında, önce SSL sertifikası ve anahtarı eksikse oluşturulup, ardından ana komut veya komutlar çalıştırılır. 
