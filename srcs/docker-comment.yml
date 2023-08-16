@@ -263,3 +263,8 @@ networks:
 # c68bbeca1eac        bridge              bridge              local
 # 995dd51460f0        host                host                local
 # 1af8b78f358c        none                null                local
+
+# docker-compose.yml belirttiğimiz portlar ile localhost:... şeklinde bağlantı kurabiliyoruz.
+# nginx servisinde prots: 443:443 ile belirttiğimizden dolayı localhost:443 ile bağlantı kurabiliriz.
+# Bunun Dockerfile içinde EXPOSE komutu ile kullanmakla bir ilgisi yoktur.
+

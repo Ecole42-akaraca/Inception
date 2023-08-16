@@ -35,7 +35,9 @@ ENTRYPOINT [ "var/www/nginx.sh" ]
 
 # Container başlatıldığında nginx'i çalıştır
 # 'CMD [ "nginx", "-g", "daemon off;" ]': Docker container'ını başlatırken çalışacak varsayılan komutu belirtir.
-#	Bu durumda, Nginx web sunucusunu başlatır ve "daemon off;" seçeneğiyle arka planda çalışmasını sağlar.
+#	"-g ,daemon off;" ifadesi, Nginx'in Docker konteynerinde "daemon" olarak çalışmasını devre dışı bırakır.
+#	Normalde Nginx'in "daemon" olarak çalışması, arka planda çalıştığı anlamına gelir.
+#	Ancak, Docker konteynerleri genellikle "foreground" (ön plan) modunda çalıştırılır ve arka planda çalışan işlemler Docker'ın davranışıyla çelişebilir.
 CMD [ "nginx", "-g", "daemon off;" ]
 
 ################################################################### INFO ####################################################################

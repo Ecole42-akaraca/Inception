@@ -188,4 +188,14 @@ CMD [ "php-fpm7.3", "-F" ]
 #	Bu dosya, PHP'nin nasıl çalışacağını tanımlar.
 # Bu dosyalar, WordPress containerı oluşturmak ve yönetmek için gereklidir.
 
+### WordPress mariadb ile nasıl bağlantı kuruyor ###
+# WordPress ve MariaDB servisleri birbirleriyle doğrudan haberleşerek çalışır.
+# WordPress, MariaDB veritabanına bağlanarak veritabanı işlemlerini gerçekleştirir.
+# WordPress, MariaDB ile iletişim kurmak için MariaDB’nin dinlediği 3306 portunu kullanır.
+#	Bu sayede, WordPress veritabanına veri yazabilir veya veritabanından veri okuyabilir. Ancak, bu işlemin gerçekleşebilmesi için, konteynerlerin aynı Docker ağına bağlı olmaları ve MariaDB konteynerinin adının WordPress konteynerindeki ayarlarda doğru bir şekilde belirtilmiş olması gerekir.
+# Konteynerler, docker-compose.yml dosyasında belirtilen servis adlarını kullanarak birbirleriyle iletişim kurabilirler.
+#	Örneğin, bir WordPress servisi, docker-compose.yml dosyasında belirtilen MariaDB servisinin adını kullanarak MariaDB’ye bağlanabilir.
+# WordPress'in kurulumunda DB_HOST olarak wp-config.php dosyasında mariadb yazdığı için mariadb servisi ile bağlantı kurabilmektedir.
+#	Eğerki bu host bilgisi olmasaydı "error establishing a database connection" hatası alınırdı.
+
 #############################################################################################################################################
